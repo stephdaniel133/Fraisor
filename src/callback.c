@@ -254,7 +254,7 @@ void CB_OnRadio(GtkWidget* pWidget, global_t* pGlobal)
 void CB_APropos(GtkWidget* pWidget, global_t* pGlobal)
 {
     GtkWidget* p_about_dialog = NULL;
-    const gchar* authors[2] = {"Stephane DANIEL", "Gwenael DANIEL"};
+    const gchar* authors[] = {"Stephane DANIEL", "Gwenael DANIEL", NULL};
     GdkPixbuf* p_logo = NULL;
 
     p_about_dialog = gtk_about_dialog_new();
