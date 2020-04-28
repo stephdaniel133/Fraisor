@@ -1,2 +1,2 @@
 # Fraisor
-Logiciel PC pour piloter et envoyer les programme G-Code à la fraiseuse
+Logiciel PC pour piloter et envoyer les programmes G-Code à la fraiseuse
