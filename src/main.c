@@ -71,12 +71,17 @@ int main(int argc, char **argv)
     // Initialisation de GTK+
     gtk_init(&argc, &argv);
 
+    //Creation des tailles de la police des labels
+    PangoAttrList *attrlist = pango_attr_list_new();
+    PangoAttribute *attrlabel = pango_attr_size_new_absolute(30 * PANGO_SCALE);
+    pango_attr_list_insert(attrlist, attrlabel);
+
     // Création de la fenêtre
     global.pMainWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     g_signal_connect(G_OBJECT(global.pMainWindow), "delete-event", G_CALLBACK(CB_Delete_Event), (void*)&global);
     gtk_window_set_decorated(GTK_WINDOW(global.pMainWindow), TRUE);
     gtk_window_set_title(GTK_WINDOW(global.pMainWindow), "Fraizor");
-    gtk_window_set_default_size(GTK_WINDOW(global.pMainWindow), 400, 700);
+    gtk_window_set_default_size(GTK_WINDOW(global.pMainWindow), 800, 700);
     gtk_window_set_position(GTK_WINDOW(global.pMainWindow), GTK_WIN_POS_CENTER);
 
     // Creation de la box verticale
@@ -236,7 +241,7 @@ int main(int argc, char **argv)
     //--------------------------------------------------------------------------------------------------
     // Creation de la box horizontale : Boutons fraiseuse, reperes piece et fraiseuse
     pHBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-    gtk_box_pack_start(GTK_BOX(pVBox), pHBox, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(pVBox), pHBox, TRUE, TRUE, 0);
 
     // Création de la grid de placement des boutons
     pGrid = gtk_grid_new();
@@ -250,48 +255,60 @@ int main(int argc, char **argv)
 
     // Création des boutons
     pBoutonXp = gtk_button_new_with_label("X+");
+    pLabel = gtk_bin_get_child(GTK_BIN(pBoutonXp));
+    gtk_label_set_attributes(GTK_LABEL(pLabel), attrlist);
     gtk_widget_set_hexpand(pBoutonXp, TRUE);
-    //gtk_widget_set_vexpand(pBoutonXp, TRUE);
+    gtk_widget_set_vexpand(pBoutonXp, TRUE);
     gtk_grid_attach(GTK_GRID(pGrid), pBoutonXp, 2, 1, 1, 1);
     g_signal_connect(G_OBJECT(pBoutonXp), "clicked", G_CALLBACK(CB_Bouton_Xp_Click), (void*)&global);
     g_signal_connect(G_OBJECT(pBoutonXp), "enter", G_CALLBACK(CB_Bouton_X_Affiche_Status), (GtkWidget*)pStatusBar);
     g_signal_connect(G_OBJECT(pBoutonXp), "leave", G_CALLBACK(CB_Bouton_X_Efface_Status), (GtkWidget*)pStatusBar);
 
     pBoutonXm = gtk_button_new_with_label("X-");
+    pLabel = gtk_bin_get_child(GTK_BIN(pBoutonXm));
+    gtk_label_set_attributes(GTK_LABEL(pLabel), attrlist);
     gtk_widget_set_hexpand(pBoutonXm, TRUE);
-    //gtk_widget_set_vexpand(pBoutonXm, TRUE);
+    gtk_widget_set_vexpand(pBoutonXm, TRUE);
     gtk_grid_attach(GTK_GRID(pGrid), pBoutonXm, 0, 1, 1, 1);
     g_signal_connect(G_OBJECT(pBoutonXm), "clicked", G_CALLBACK(CB_Bouton_Xm_Click), (void*)&global);
     g_signal_connect(G_OBJECT(pBoutonXm), "enter", G_CALLBACK(CB_Bouton_X_Affiche_Status), (GtkWidget*)pStatusBar);
     g_signal_connect(G_OBJECT(pBoutonXm), "leave", G_CALLBACK(CB_Bouton_X_Efface_Status), (GtkWidget*)pStatusBar);
 
     pBoutonYp = gtk_button_new_with_label("Y+");
+    pLabel = gtk_bin_get_child(GTK_BIN(pBoutonYp));
+    gtk_label_set_attributes(GTK_LABEL(pLabel), attrlist);
     gtk_widget_set_hexpand(pBoutonYp, TRUE);
-    //gtk_widget_set_vexpand(pBoutonYp, TRUE);
+    gtk_widget_set_vexpand(pBoutonYp, TRUE);
     gtk_grid_attach(GTK_GRID(pGrid), pBoutonYp, 1, 0, 1, 1);
     g_signal_connect(G_OBJECT(pBoutonYp), "clicked", G_CALLBACK(CB_Bouton_Yp_Click), (void*)&global);
     g_signal_connect(G_OBJECT(pBoutonYp), "enter", G_CALLBACK(CB_Bouton_Y_Affiche_Status), (GtkWidget*)pStatusBar);
     g_signal_connect(G_OBJECT(pBoutonYp), "leave", G_CALLBACK(CB_Bouton_Y_Efface_Status), (GtkWidget*)pStatusBar);
 
     pBoutonYm = gtk_button_new_with_label("Y-");
+    pLabel = gtk_bin_get_child(GTK_BIN(pBoutonYm));
+    gtk_label_set_attributes(GTK_LABEL(pLabel), attrlist);
     gtk_widget_set_hexpand(pBoutonYm, TRUE);
-    //gtk_widget_set_vexpand(pBoutonYm, TRUE);
+    gtk_widget_set_vexpand(pBoutonYm, TRUE);
     gtk_grid_attach(GTK_GRID(pGrid), pBoutonYm, 1, 2, 1, 1);
     g_signal_connect(G_OBJECT(pBoutonYm), "clicked", G_CALLBACK(CB_Bouton_Ym_Click), (void*)&global);
     g_signal_connect(G_OBJECT(pBoutonYm), "enter", G_CALLBACK(CB_Bouton_Y_Affiche_Status), (GtkWidget*)pStatusBar);
     g_signal_connect(G_OBJECT(pBoutonYm), "leave", G_CALLBACK(CB_Bouton_Y_Efface_Status), (GtkWidget*)pStatusBar);
 
     pBoutonZp = gtk_button_new_with_label("Z+");
+    pLabel = gtk_bin_get_child(GTK_BIN(pBoutonZp));
+    gtk_label_set_attributes(GTK_LABEL(pLabel), attrlist);
     gtk_widget_set_hexpand(pBoutonZp, TRUE);
-    //gtk_widget_set_vexpand(pBoutonZp, TRUE);
+    gtk_widget_set_vexpand(pBoutonZp, TRUE);
     gtk_grid_attach(GTK_GRID(pGrid), pBoutonZp, 4, 0, 1, 1);
     g_signal_connect(G_OBJECT(pBoutonZp), "clicked", G_CALLBACK(CB_Bouton_Zp_Click), (void*)&global);
     g_signal_connect(G_OBJECT(pBoutonZp), "enter", G_CALLBACK(CB_Bouton_Z_Affiche_Status), (GtkWidget*)pStatusBar);
     g_signal_connect(G_OBJECT(pBoutonZp), "leave", G_CALLBACK(CB_Bouton_Z_Efface_Status), (GtkWidget*)pStatusBar);
 
     pBoutonZm = gtk_button_new_with_label("Z-");
+    pLabel = gtk_bin_get_child(GTK_BIN(pBoutonZm));
+    gtk_label_set_attributes(GTK_LABEL(pLabel), attrlist);
     gtk_widget_set_hexpand(pBoutonZm, TRUE);
-    //gtk_widget_set_vexpand(pBoutonZm, TRUE);
+    gtk_widget_set_vexpand(pBoutonZm, TRUE);
     gtk_grid_attach(GTK_GRID(pGrid), pBoutonZm, 4, 2, 1, 1);
     g_signal_connect(G_OBJECT(pBoutonZm), "clicked", G_CALLBACK(CB_Bouton_Zm_Click), (void*)&global);
     g_signal_connect(G_OBJECT(pBoutonZm), "enter", G_CALLBACK(CB_Bouton_Z_Affiche_Status), (GtkWidget*)pStatusBar);
@@ -351,39 +368,47 @@ int main(int argc, char **argv)
     gdk_window_set_cursor(gtk_widget_get_window(pEventBox1), pHandCursor);
 
 
-
     pRepPiece = gtk_frame_new("Repere Piece");
     gtk_container_set_border_width(GTK_CONTAINER(pRepPiece), 5);
-    gtk_container_add (GTK_CONTAINER(pEventBox1), pRepPiece);
+    gtk_container_add(GTK_CONTAINER(pEventBox1), pRepPiece);
 
     pVBox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     gtk_container_add(GTK_CONTAINER(pRepPiece), pVBox2);
 
     pHBox1 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-    gtk_container_add(GTK_CONTAINER(pVBox2), pHBox1);
+    gtk_box_pack_start(GTK_BOX(pVBox2), pHBox1, TRUE, TRUE, 0);
     pLabel = gtk_label_new("X =");
+    gtk_label_set_attributes(GTK_LABEL(pLabel), attrlist);
     gtk_box_pack_start(GTK_BOX(pHBox1), pLabel, TRUE, TRUE, 0);
     pLabel = gtk_label_new("mm");
+    gtk_label_set_attributes(GTK_LABEL(pLabel), attrlist);
     gtk_box_pack_end(GTK_BOX(pHBox1), pLabel, TRUE, TRUE, 0);
     global.pLabelXmm = gtk_label_new("0,00");
+    gtk_label_set_attributes(GTK_LABEL(global.pLabelXmm), attrlist);
     gtk_box_pack_end(GTK_BOX(pHBox1), global.pLabelXmm, TRUE, TRUE, 0);
 
     pHBox1 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-    gtk_container_add(GTK_CONTAINER(pVBox2), pHBox1);
+    gtk_box_pack_start(GTK_BOX(pVBox2), pHBox1, TRUE, TRUE, 0);
     pLabel = gtk_label_new("Y =");
+    gtk_label_set_attributes(GTK_LABEL(pLabel), attrlist);
     gtk_box_pack_start(GTK_BOX(pHBox1), pLabel, TRUE, TRUE, 0);
     pLabel = gtk_label_new("mm");
+    gtk_label_set_attributes(GTK_LABEL(pLabel), attrlist);
     gtk_box_pack_end(GTK_BOX(pHBox1), pLabel, TRUE, TRUE, 0);
     global.pLabelYmm = gtk_label_new("0,00");
+    gtk_label_set_attributes(GTK_LABEL(global.pLabelYmm), attrlist);
     gtk_box_pack_start(GTK_BOX(pHBox1), global.pLabelYmm, TRUE, TRUE, 0);
 
     pHBox1 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-    gtk_container_add(GTK_CONTAINER(pVBox2), pHBox1);
+    gtk_box_pack_start(GTK_BOX(pVBox2), pHBox1, TRUE, TRUE, 0);
     pLabel = gtk_label_new("Z =");
+    gtk_label_set_attributes(GTK_LABEL(pLabel), attrlist);
     gtk_box_pack_start(GTK_BOX(pHBox1), pLabel, TRUE, TRUE, 0);
     pLabel = gtk_label_new("mm");
+    gtk_label_set_attributes(GTK_LABEL(pLabel), attrlist);
     gtk_box_pack_end(GTK_BOX(pHBox1), pLabel, TRUE, TRUE, 0);
     global.pLabelZmm = gtk_label_new("0,00");
+    gtk_label_set_attributes(GTK_LABEL(global.pLabelZmm), attrlist);
     gtk_box_pack_start(GTK_BOX(pHBox1), global.pLabelZmm, TRUE, TRUE, 0);
 
 
@@ -403,30 +428,39 @@ int main(int argc, char **argv)
     gtk_container_add(GTK_CONTAINER(pRepFraiseuse), pVBox2);
 
     pHBox1 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-    gtk_container_add(GTK_CONTAINER(pVBox2), pHBox1);
+    gtk_box_pack_start(GTK_BOX(pVBox2), pHBox1, TRUE, TRUE, 0);
     pLabel = gtk_label_new("X =");
+    gtk_label_set_attributes(GTK_LABEL(pLabel), attrlist);
     gtk_box_pack_start(GTK_BOX(pHBox1), pLabel, TRUE, TRUE, 0);
     pLabel = gtk_label_new("pas");
+    gtk_label_set_attributes(GTK_LABEL(pLabel), attrlist);
     gtk_box_pack_end(GTK_BOX(pHBox1), pLabel, TRUE, TRUE, 0);
     global.pLabelXpas = gtk_label_new("0");
+    gtk_label_set_attributes(GTK_LABEL(global.pLabelXpas), attrlist);
     gtk_box_pack_start(GTK_BOX(pHBox1), global.pLabelXpas, TRUE, TRUE, 0);
 
     pHBox1 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-    gtk_container_add(GTK_CONTAINER(pVBox2), pHBox1);
+    gtk_box_pack_start(GTK_BOX(pVBox2), pHBox1, TRUE, TRUE, 0);
     pLabel = gtk_label_new("Y =");
+    gtk_label_set_attributes(GTK_LABEL(pLabel), attrlist);
     gtk_box_pack_start(GTK_BOX(pHBox1), pLabel, TRUE, TRUE, 0);
     pLabel = gtk_label_new("pas");
+    gtk_label_set_attributes(GTK_LABEL(pLabel), attrlist);
     gtk_box_pack_end(GTK_BOX(pHBox1), pLabel, TRUE, TRUE, 0);
     global.pLabelYpas = gtk_label_new("0");
+    gtk_label_set_attributes(GTK_LABEL(global.pLabelYpas), attrlist);
     gtk_box_pack_start(GTK_BOX(pHBox1), global.pLabelYpas, TRUE, TRUE, 0);
 
     pHBox1 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-    gtk_container_add(GTK_CONTAINER(pVBox2), pHBox1);
+    gtk_box_pack_start(GTK_BOX(pVBox2), pHBox1, TRUE, TRUE, 0);
     pLabel = gtk_label_new("Z =");
+    gtk_label_set_attributes(GTK_LABEL(pLabel), attrlist);
     gtk_box_pack_start(GTK_BOX(pHBox1), pLabel, TRUE, TRUE, 0);
     pLabel = gtk_label_new("pas");
+    gtk_label_set_attributes(GTK_LABEL(pLabel), attrlist);
     gtk_box_pack_end(GTK_BOX(pHBox1), pLabel, TRUE, TRUE, 0);
     global.pLabelZpas = gtk_label_new("0");
+    gtk_label_set_attributes(GTK_LABEL(global.pLabelZpas), attrlist);
     gtk_box_pack_start(GTK_BOX(pHBox1), global.pLabelZpas, TRUE, TRUE, 0);
 
 
@@ -441,9 +475,6 @@ int main(int argc, char **argv)
 
     // Insertion dans la fenetre de la barre de status
     gtk_box_pack_end(GTK_BOX(pVBox), pStatusBar, FALSE, FALSE, 0);
-
-
-
 
 
 
@@ -468,6 +499,8 @@ int main(int argc, char **argv)
 
     //g_thread_join(global.Thread1);
     //g_thread_join(global.Thread2);
+
+    pango_attr_list_unref(attrlist);
 
     //On attend la fin de toutes les tâches
     g_usleep(100*1000);
