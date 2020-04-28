@@ -254,27 +254,22 @@ void CB_OnRadio(GtkWidget* pWidget, global_t* pGlobal)
 void CB_APropos(GtkWidget* pWidget, global_t* pGlobal)
 {
     GtkWidget* p_about_dialog = NULL;
-    const gchar* authors[2] = {"Stephane DANIEL", NULL};
-    gchar* contents = NULL;
-    gchar* utf8 = NULL;
+    const gchar* authors[2] = {"Stephane DANIEL", "Gwenael DANIEL"};
     GdkPixbuf* p_logo = NULL;
 
     p_about_dialog = gtk_about_dialog_new();
     gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(p_about_dialog), "1.0");
     gtk_about_dialog_set_authors(GTK_ABOUT_DIALOG(p_about_dialog), authors);
 
-    if (g_file_get_contents ("COPYING.txt", &contents, NULL, NULL))
-    {
-        utf8 = g_locale_to_utf8(contents, -1, NULL, NULL, NULL);
-        g_free(contents), contents = NULL;
-        gtk_about_dialog_set_license(GTK_ABOUT_DIALOG (p_about_dialog), utf8);
-        g_free(utf8), utf8 = NULL;
-    }
+    gtk_about_dialog_set_license_type(GTK_ABOUT_DIALOG(p_about_dialog), GTK_LICENSE_LGPL_3_0);
 
-    gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(p_about_dialog), "http://www.google.com/");
+    gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(p_about_dialog), "https://github.com/stephdaniel133/Fraisor.git");
+    gtk_about_dialog_set_website_label(GTK_ABOUT_DIALOG(p_about_dialog), "Github");
 
-    p_logo = gdk_pixbuf_new_from_file ("logo.png", NULL);
+    p_logo = gdk_pixbuf_new_from_file("logo.png", NULL);
     gtk_about_dialog_set_logo (GTK_ABOUT_DIALOG(p_about_dialog), p_logo);
+
+    gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(p_about_dialog), "@2010-2020 Stephane DANIEL");
 
     gtk_dialog_run(GTK_DIALOG(p_about_dialog));
 
