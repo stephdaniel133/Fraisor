@@ -512,6 +512,10 @@ gint CB_Bouton_OK_ReperePiece(GtkButton* button, global_t* pGlobal)
         Envoi_Changement_Repere_Piece('Z', mesZ, pGlobal);
         g_usleep(100000);
     }
+    else
+    {
+        print_warning(pGlobal, "Port COM non ouvert !\n");
+    }
 
     gtk_widget_destroy(pGlobal->pWindow);
 
@@ -627,31 +631,29 @@ void CB_ReperePiece(GtkWidget* pWidget, GdkEvent* event, global_t* pGlobal)
 /*----------------------Callback de réglage de repères fraiseuse de l'interface-----------------------*/
 gint CB_Bouton_OK_RepereFraiseuse(GtkButton* button, global_t* pGlobal)
 {
-    if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(pGlobal->pCheckEntryX)))
+    if(pGlobal->comport_open == 0)  //Si le port série est ouvert
     {
-        if(pGlobal->comport_open == 0)  //Si le port série est ouvert
+        if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(pGlobal->pCheckEntryX)))
         {
             Envoi_Reset_Axe_Fraiseuse('X', pGlobal);
             g_usleep(100000);
         }
-    }
 
-    if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(pGlobal->pCheckEntryY)))
-    {
-        if(pGlobal->comport_open == 0)  //Si le port série est ouvert
+        if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(pGlobal->pCheckEntryY)))
         {
             Envoi_Reset_Axe_Fraiseuse('Y', pGlobal);
             g_usleep(100000);
         }
-    }
 
-    if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(pGlobal->pCheckEntryZ)))
-    {
-        if(pGlobal->comport_open == 0)  //Si le port série est ouvert
+        if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(pGlobal->pCheckEntryZ)))
         {
             Envoi_Reset_Axe_Fraiseuse('Z', pGlobal);
             g_usleep(100000);
         }
+    }
+    else
+    {
+        print_warning(pGlobal, "Port COM non ouvert !\n");
     }
 
     gtk_widget_destroy(pGlobal->pWindow);
