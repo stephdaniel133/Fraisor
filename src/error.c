@@ -42,8 +42,8 @@ static void print_message(global_t *pGlobal, GtkMessageType type, const gchar *f
     GtkWidget *p_dialog = NULL;
 
     message = g_strdup_vprintf (format, va);
-    printf(message);
-    p_dialog = gtk_message_dialog_new (GTK_WINDOW(pGlobal->pMainWindow), GTK_DIALOG_MODAL, type, GTK_BUTTONS_OK, message);
+    printf("%s", message);
+    p_dialog = gtk_message_dialog_new (GTK_WINDOW(pGlobal->pMainWindow), GTK_DIALOG_MODAL, type, GTK_BUTTONS_OK, "%s", message);
 
     gtk_dialog_run (GTK_DIALOG (p_dialog));
     gtk_widget_destroy (p_dialog);
