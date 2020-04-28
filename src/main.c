@@ -19,44 +19,45 @@ int main(int argc, char **argv)
     volatile global_t global;
 
     /* Variables */
-    GtkWidget* pVBox             = NULL;
-    GtkWidget* pHBox             = NULL;
+    static GtkWidget* pVBox             = NULL;
+    static GtkWidget* pHBox             = NULL;
 
-    GtkWidget* pBarreMenu        = NULL;
-    GtkWidget* pMenu             = NULL;
-    GtkWidget* pMenuItem         = NULL;
+    static GtkWidget* pBarreMenu        = NULL;
+    static GtkWidget* pMenu             = NULL;
+    static GtkWidget* pMenuItem         = NULL;
     int        comport;
     char       nomportcom[50];
-    GSList*    pList;
+    static GSList*    pList;
 
-    GtkWidget* pToolBar          = NULL;
-    GtkToolItem* pToolItem       = NULL;
+    static GtkWidget* pToolBar          = NULL;
+    static GtkToolItem* pToolItem       = NULL;
 
-    GtkWidget* pGrid             = NULL;
-    GtkWidget* pBoutonXp         = NULL;
-    GtkWidget* pBoutonXm         = NULL;
-    GtkWidget* pBoutonYp         = NULL;
-    GtkWidget* pBoutonYm         = NULL;
-    GtkWidget* pBoutonZp         = NULL;
-    GtkWidget* pBoutonZm         = NULL;
+    static GtkWidget* pGrid             = NULL;
+    static GtkWidget* pBoutonXp         = NULL;
+    static GtkWidget* pBoutonXm         = NULL;
+    static GtkWidget* pBoutonYp         = NULL;
+    static GtkWidget* pBoutonYm         = NULL;
+    static GtkWidget* pBoutonZp         = NULL;
+    static GtkWidget* pBoutonZm         = NULL;
 
-    GtkWidget* pVBox1            = NULL;
-    GtkWidget* pVBox2            = NULL;
-    GtkWidget* pHBox1            = NULL;
-    GtkWidget* pLabel            = NULL;
-    GtkWidget* pEventBox1        = NULL;
-    GtkWidget* pRepPiece         = NULL;
-    GtkWidget* pEventBox2        = NULL;
-    GtkWidget* pRepFraiseuse     = NULL;
+    static GtkWidget* pVBox1            = NULL;
+    static GtkWidget* pVBox2            = NULL;
+    static GtkWidget* pHBox1            = NULL;
+    static GtkWidget* pLabel            = NULL;
+    static GtkWidget* pEventBox1        = NULL;
+    static GtkWidget* pRepPiece         = NULL;
+    static GdkCursor* pHandCursor       = NULL;
+    static GtkWidget* pEventBox2        = NULL;
+    static GtkWidget* pRepFraiseuse     = NULL;
 
 
-    GtkTextBuffer* pTextBuffer   = NULL;
-    GtkWidget* pScrolledWindow   = NULL;
+    static GtkTextBuffer* pTextBuffer   = NULL;
+    static GtkWidget* pScrolledWindow   = NULL;
 
-    GtkWidget* pStatusBar        = NULL;
+    static GtkWidget* pStatusBar        = NULL;
 
     gchar*     sUtf8             = NULL;
-    char mode[]={'8', 'N', '1', 0};
+    static char mode[]={'8', 'N', '1', 0};
 
 //--------------------------------------------------------------------------------------------------------
     memset((void*)&global, 0, sizeof(global_t));
@@ -346,7 +347,10 @@ int main(int argc, char **argv)
     gtk_widget_show(pEventBox1);
     g_signal_connect(pEventBox1, "button-press-event", G_CALLBACK(CB_ReperePiece), (void*)&global);
     gtk_widget_realize(pEventBox1);
-    gdk_window_set_cursor(gtk_widget_get_window(pEventBox1), gdk_cursor_new(GDK_HAND1));
+    pHandCursor = gdk_cursor_new_for_display(gdk_screen_get_display(gdk_screen_get_default()), GDK_HAND2);
+    gdk_window_set_cursor(gtk_widget_get_window(pEventBox1), pHandCursor);
+
+
 
     pRepPiece = gtk_frame_new("Repere Piece");
     gtk_container_set_border_width(GTK_CONTAINER(pRepPiece), 5);
@@ -389,7 +393,7 @@ int main(int argc, char **argv)
     gtk_widget_show(pEventBox2);
     g_signal_connect(pEventBox2, "button-press-event", G_CALLBACK(CB_RepereFraiseuse), (void*)&global);
     gtk_widget_realize(pEventBox2);
-    gdk_window_set_cursor(gtk_widget_get_window(pEventBox2), gdk_cursor_new(GDK_HAND1));
+    gdk_window_set_cursor(gtk_widget_get_window(pEventBox2), pHandCursor);
 
     pRepFraiseuse = gtk_frame_new("Repere Fraiseuse");
     gtk_container_set_border_width(GTK_CONTAINER(pRepFraiseuse), 5);
