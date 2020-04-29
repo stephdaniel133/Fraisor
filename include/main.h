@@ -73,7 +73,7 @@ typedef struct
     uint32_t Zfraiseuse;
     float Zpiece;
     uint8_t status;
-    char buffer[10];
+    char buffer[20];
     uint32_t nombre_ligne;
     uint32_t LigneProg;
 } global_t;
