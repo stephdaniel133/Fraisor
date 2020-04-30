@@ -637,17 +637,26 @@ gint CB_Bouton_OK_RepereFraiseuse(GtkButton* button, global_t* pGlobal)
         {
             Envoi_Reset_Axe_Fraiseuse('X', pGlobal);
             g_usleep(100000);
+
+            Envoi_Changement_Repere_Piece('X', 0, pGlobal);
+            g_usleep(100000);
         }
 
         if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(pGlobal->pCheckEntryY)))
         {
             Envoi_Reset_Axe_Fraiseuse('Y', pGlobal);
             g_usleep(100000);
+
+            Envoi_Changement_Repere_Piece('Y', 0, pGlobal);
+            g_usleep(100000);
         }
 
         if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(pGlobal->pCheckEntryZ)))
         {
             Envoi_Reset_Axe_Fraiseuse('Z', pGlobal);
+            g_usleep(100000);
+
+            Envoi_Changement_Repere_Piece('Z', 0, pGlobal);
             g_usleep(100000);
         }
     }
