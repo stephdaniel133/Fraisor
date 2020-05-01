@@ -33,7 +33,7 @@ void print_error(global_t *pGlobal, char *format, ...)
     va_start(va, format);
     print_message(pGlobal, GTK_MESSAGE_ERROR, format, va);
     va_end(va);
-    exit (EXIT_FAILURE);
+    exit(EXIT_FAILURE);
 }
 
 static void print_message(global_t *pGlobal, GtkMessageType type, const gchar *format, va_list va)
@@ -43,11 +43,11 @@ static void print_message(global_t *pGlobal, GtkMessageType type, const gchar *f
 
     message = g_strdup_vprintf (format, va);
     printf("%s", message);
-    p_dialog = gtk_message_dialog_new (GTK_WINDOW(pGlobal->pMainWindow), GTK_DIALOG_MODAL, type, GTK_BUTTONS_OK, "%s", message);
+    p_dialog = gtk_message_dialog_new(GTK_WINDOW(pGlobal->pMainWindow), GTK_DIALOG_MODAL, type, GTK_BUTTONS_OK, "%s", message);
 
     gtk_dialog_run(GTK_DIALOG (p_dialog));
-    gtk_widget_destroy (p_dialog);
+    gtk_widget_destroy(p_dialog);
 
-    g_free (message);
+    g_free(message);
     message = NULL;
 }
