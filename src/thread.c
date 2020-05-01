@@ -8,6 +8,7 @@
 #include "communication.h"
 #include "rs232.h"
 #include "callback.h"
+#include "error.h"
 
 
 void SurlignageProg(global_t* pGlobal);
@@ -173,7 +174,7 @@ void UpdateLabels(global_t* pGlobal)
             gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemStop), FALSE);
             gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemPause), FALSE);
             gtk_text_view_set_editable(GTK_TEXT_VIEW(pGlobal->pTextView), TRUE);
-            printf("Butee X min atteinte !\n");
+            print_error(pGlobal, "%s", "Butee X min atteinte !\n");
         }
 
         if((0x04 == (pGlobal->status & 0x04)) && (status != pGlobal->status))
@@ -183,7 +184,7 @@ void UpdateLabels(global_t* pGlobal)
             gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemStop), FALSE);
             gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemPause), FALSE);
             gtk_text_view_set_editable(GTK_TEXT_VIEW(pGlobal->pTextView), TRUE);
-            printf("Butee X max atteinte !\n");
+            print_error(pGlobal, "%s", "Butee X max atteinte !\n");
         }
 
 
@@ -194,7 +195,7 @@ void UpdateLabels(global_t* pGlobal)
             gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemStop), FALSE);
             gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemPause), FALSE);
             gtk_text_view_set_editable(GTK_TEXT_VIEW(pGlobal->pTextView), TRUE);
-            printf("Butee Y min atteinte !\n");
+            print_error(pGlobal, "%s", "Butee Y min atteinte !\n");
         }
 
         if((0x10 == (pGlobal->status & 0x10)) && (status != pGlobal->status))
@@ -204,7 +205,7 @@ void UpdateLabels(global_t* pGlobal)
             gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemStop), FALSE);
             gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemPause), FALSE);
             gtk_text_view_set_editable(GTK_TEXT_VIEW(pGlobal->pTextView), TRUE);
-            printf("Butee Y max atteinte !\n");
+            print_error(pGlobal, "%s", "Butee Y max atteinte !\n");
         }
 
 
@@ -215,7 +216,7 @@ void UpdateLabels(global_t* pGlobal)
             gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemStop), FALSE);
             gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemPause), FALSE);
             gtk_text_view_set_editable(GTK_TEXT_VIEW(pGlobal->pTextView), TRUE);
-            printf("Butee Z min atteinte !\n");
+            print_error(pGlobal, "%s", "Butee Z min atteinte !\n");
         }
 
         if((0x40 == (pGlobal->status & 0x40)) && (status != pGlobal->status))
@@ -225,7 +226,7 @@ void UpdateLabels(global_t* pGlobal)
             gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemStop), FALSE);
             gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemPause), FALSE);
             gtk_text_view_set_editable(GTK_TEXT_VIEW(pGlobal->pTextView), TRUE);
-            printf("Butee Z max atteinte !\n");
+            print_error(pGlobal, "%s", "Butee Z max atteinte !\n");
         }
 
         status = pGlobal->status;
