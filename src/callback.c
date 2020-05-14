@@ -258,6 +258,8 @@ void CB_APropos(GtkWidget* pWidget, global_t* pGlobal)
     GdkPixbuf* p_logo = NULL;
 
     p_about_dialog = gtk_about_dialog_new();
+    gtk_window_set_transient_for(GTK_WINDOW(p_about_dialog), GTK_WINDOW(pGlobal->pMainWindow));
+
     gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(p_about_dialog), "1.0");
     gtk_about_dialog_set_authors(GTK_ABOUT_DIALOG(p_about_dialog), authors);
 
