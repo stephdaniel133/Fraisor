@@ -66,7 +66,14 @@ void Envoi_Deplacement(char axe, char posneg, global_t* pGlobal)
     g_mutex_unlock(pGlobal->Mutex_UpdateLabel);
 
     increment = gtk_combo_box_text_get_active_text(GTK_COMBO_BOX_TEXT(pGlobal->pComboBoxInc));
-    sscanf(increment, "%f", &incrementf);
+    if(strcmp(increment, "1 pas") == 0)
+    {
+        incrementf = RESOLUTION_FRAISEUSE;
+    }
+    else
+    {
+        sscanf(increment, "%f", &incrementf);
+    }
     free(increment);
 
     vitesse = gtk_combo_box_text_get_active_text(GTK_COMBO_BOX_TEXT(pGlobal->pComboBoxVit));

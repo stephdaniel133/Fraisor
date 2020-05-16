@@ -316,7 +316,7 @@ int main(int argc, char **argv)
 
     // Création de la ComboBox Déplacements
     global.pComboBoxInc = gtk_combo_box_text_new();
-    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(global.pComboBoxInc), "0,01389 mm");
+    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(global.pComboBoxInc), "1 pas");
     gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(global.pComboBoxInc), "0,1 mm");
     gtk_combo_box_set_active(GTK_COMBO_BOX(global.pComboBoxInc), 1);
     gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(global.pComboBoxInc), "1 mm");

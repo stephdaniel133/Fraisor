@@ -10,6 +10,9 @@
 
 #define GTK_THEME_FILE "temprc.txt"
 
+#define RESOLUTION_FRAISEUSE (float)1.0/72.0
+
+
 enum EtatProgramme
 {
     STOP,
