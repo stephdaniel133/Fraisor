@@ -42,9 +42,6 @@ void CB_Bouton_Z_Efface_Status(GtkWidget* widget, gpointer iContextId);
 
 void ComboBoxVitProg_on_changed(GtkWidget* pWidget, global_t* pGlobal);
 
-void CB_Combo_Affiche_Status(GtkWidget* pWidget, gpointer pStatusBar);
-void CB_Combo_Efface_Status(GtkWidget* pWidget, gpointer pStatusBar);
-
 void CB_ReperePiece(GtkWidget* widget, GdkEvent* event, global_t* pGlobal);
 void CB_RepereFraiseuse(GtkWidget* widget, GdkEvent* event, global_t* pGlobal);
 

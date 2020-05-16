@@ -470,16 +470,6 @@ void ComboBoxVitProg_on_changed(GtkWidget* pWidget, global_t* pGlobal)
     Envoi_VitesseProgramme(pGlobal);
 }
 
-void CB_Combo_Affiche_Status(GtkWidget* pWidget, gpointer pStatusBar)
-{
-    gtk_statusbar_push(GTK_STATUSBAR(pStatusBar), 0, "Selection de la distance à chaque clic sur les boutons de déplacement");
-}
-
-void CB_Combo_Efface_Status(GtkWidget* pWidget, gpointer pStatusBar)
-{
-    gtk_statusbar_pop(GTK_STATUSBAR(pStatusBar), 0);
-}
-
 /*----------------------Callback des changements de repères piece de l'interface-----------------------*/
 gint CB_Bouton_OK_ReperePiece(GtkButton* button, global_t* pGlobal)
 {
@@ -508,11 +498,8 @@ gint CB_Bouton_OK_ReperePiece(GtkButton* button, global_t* pGlobal)
     if(pGlobal->comport_open == 0)  //Si le port série est ouvert
     {
         Envoi_Changement_Repere_Piece('X', mesX, pGlobal);
-        g_usleep(100000);
         Envoi_Changement_Repere_Piece('Y', mesY, pGlobal);
-        g_usleep(100000);
         Envoi_Changement_Repere_Piece('Z', mesZ, pGlobal);
-        g_usleep(100000);
     }
     else
     {
@@ -558,7 +545,7 @@ void CB_ReperePiece(GtkWidget* pWidget, GdkEvent* event, global_t* pGlobal)
 
     /* Creation de la zone d'entree */
     pLabel = gtk_label_new("Entrer les nouvelles coordonees piece:");
-    gtk_box_pack_start(GTK_BOX(pVBox), pLabel, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(pVBox), pLabel, TRUE, TRUE, 0);
 
 
     /* Creation d'un box horizontale Axe X*/
@@ -611,6 +598,7 @@ void CB_ReperePiece(GtkWidget* pWidget, GdkEvent* event, global_t* pGlobal)
 
     /* Creation d'un box horizontale */
     pHBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_box_set_homogeneous(GTK_BOX(pHBox), TRUE);
     gtk_container_add(GTK_CONTAINER(pVBox), pHBox);
 
     pBouton = gtk_button_new_with_label("OK");
@@ -638,28 +626,19 @@ gint CB_Bouton_OK_RepereFraiseuse(GtkButton* button, global_t* pGlobal)
         if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(pGlobal->pCheckEntryX)))
         {
             Envoi_Reset_Axe_Fraiseuse('X', pGlobal);
-            g_usleep(100000);
-
             Envoi_Changement_Repere_Piece('X', 0, pGlobal);
-            g_usleep(100000);
         }
 
         if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(pGlobal->pCheckEntryY)))
         {
             Envoi_Reset_Axe_Fraiseuse('Y', pGlobal);
-            g_usleep(100000);
-
             Envoi_Changement_Repere_Piece('Y', 0, pGlobal);
-            g_usleep(100000);
         }
 
         if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(pGlobal->pCheckEntryZ)))
         {
             Envoi_Reset_Axe_Fraiseuse('Z', pGlobal);
-            g_usleep(100000);
-
             Envoi_Changement_Repere_Piece('Z', 0, pGlobal);
-            g_usleep(100000);
         }
     }
     else
@@ -694,53 +673,29 @@ void CB_RepereFraiseuse(GtkWidget* pWidget, GdkEvent* event, global_t* pGlobal)
     pVBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     gtk_container_add(GTK_CONTAINER(pWindow), pVBox);
 
-
-    /* Creation d'un box horizontale Label */
-    pHBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
-    gtk_container_add(GTK_CONTAINER(pVBox), pHBox);
-
     /* Creation de la zone de label*/
     pLabel = gtk_label_new("Cocher la case pour reseter l'axe:");
-    gtk_box_pack_start(GTK_BOX(pHBox), pLabel, FALSE, FALSE, 0);
-
-
-    /* Creation d'un box horizontale Axe X*/
-    pHBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
-    gtk_container_add(GTK_CONTAINER(pVBox), pHBox);
+    gtk_box_pack_start(GTK_BOX(pVBox), pLabel, TRUE, TRUE, 0);
 
     /* Creation de la zone d'entree Axe X */
     pCheckEntryX = gtk_check_button_new_with_label("Reset Axe X");
-    gtk_box_pack_start(GTK_BOX(pHBox), pCheckEntryX, TRUE, TRUE, 0);
-
-
-    /* Creation d'un box horizontale Axe Y*/
-    pHBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
-    gtk_container_add(GTK_CONTAINER(pVBox), pHBox);
+    gtk_box_pack_start(GTK_BOX(pVBox), pCheckEntryX, TRUE, TRUE, 0);
 
     /* Creation de la zone d'entree Axe Y */
     pCheckEntryY = gtk_check_button_new_with_label("Reset Axe Y");
-    gtk_box_pack_start(GTK_BOX(pHBox), pCheckEntryY, TRUE, TRUE, 0);
-
-
-    /* Creation d'un box horizontale Axe Z */
-    pHBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
-    gtk_container_add(GTK_CONTAINER(pVBox), pHBox);
+    gtk_box_pack_start(GTK_BOX(pVBox), pCheckEntryY, TRUE, TRUE, 0);
 
     /* Creation de la zone d'entree Axe Z */
     pCheckEntryZ = gtk_check_button_new_with_label("Reset Axe Z");
-    gtk_box_pack_start(GTK_BOX(pHBox), pCheckEntryZ, TRUE, TRUE, 0);
-
+    gtk_box_pack_start(GTK_BOX(pVBox), pCheckEntryZ, TRUE, TRUE, 0);
 
     /* Creation d'un box horizontale pour les boutons */
     pHBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_box_set_homogeneous(GTK_BOX(pHBox), TRUE);
     gtk_container_add(GTK_CONTAINER(pVBox), pHBox);
 
     pBouton = gtk_button_new_with_label("OK");
     gtk_container_set_border_width(GTK_CONTAINER(pBouton), 5);
-    pGlobal->pWindow = pWindow;
-    pGlobal->pCheckEntryX = pCheckEntryX;
-    pGlobal->pCheckEntryY = pCheckEntryY;
-    pGlobal->pCheckEntryZ = pCheckEntryZ;
     g_signal_connect(G_OBJECT(pBouton), "clicked", G_CALLBACK(CB_Bouton_OK_RepereFraiseuse), pGlobal);
     gtk_box_pack_start(GTK_BOX(pHBox), pBouton, TRUE, TRUE, 0);
 
@@ -749,6 +704,10 @@ void CB_RepereFraiseuse(GtkWidget* pWidget, GdkEvent* event, global_t* pGlobal)
     g_signal_connect(G_OBJECT(pBouton), "clicked", G_CALLBACK(CB_Bouton_Annuler), pWindow);
     gtk_box_pack_start(GTK_BOX(pHBox), pBouton, TRUE, TRUE, 0);
 
+    pGlobal->pWindow = pWindow;
+    pGlobal->pCheckEntryX = pCheckEntryX;
+    pGlobal->pCheckEntryY = pCheckEntryY;
+    pGlobal->pCheckEntryZ = pCheckEntryZ;
 
     gtk_widget_show_all(pWindow);
 }

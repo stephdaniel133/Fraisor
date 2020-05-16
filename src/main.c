@@ -242,11 +242,12 @@ int main(int argc, char **argv)
     // Creation de la box horizontale : Boutons fraiseuse, reperes piece et fraiseuse
     pHBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_box_pack_start(GTK_BOX(pVBox), pHBox, TRUE, TRUE, 0);
+    gtk_box_set_homogeneous(GTK_BOX(pHBox), TRUE);
 
     // Création de la grid de placement des boutons
     pGrid = gtk_grid_new();
     gtk_box_pack_start(GTK_BOX(pHBox), pGrid, TRUE, TRUE, 0);
-    //gtk_container_set_border_width(GTK_CONTAINER(pGrid), 10);
+    gtk_container_set_border_width(GTK_CONTAINER(pGrid), 5);
 
     gtk_widget_set_halign(pGrid, GTK_ALIGN_FILL);
     //gtk_widget_set_valign(pGrid, GTK_ALIGN_FILL);
@@ -325,6 +326,8 @@ int main(int argc, char **argv)
 
     gtk_grid_attach(GTK_GRID(pGrid), global.pComboBoxInc, 0, 3, 5, 1);
 
+
+
     // Création de la ComboBox Vitesses
     global.pComboBoxVit = gtk_combo_box_text_new();
     gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(global.pComboBoxVit), "10 mm/min");
@@ -356,10 +359,10 @@ int main(int argc, char **argv)
     // Creation de la box verticale des 2 repères
     pVBox1 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     gtk_box_pack_start(GTK_BOX(pHBox), pVBox1, TRUE, TRUE, 0);
-    gtk_container_set_border_width(GTK_CONTAINER(pVBox1), 5);
+    gtk_box_set_homogeneous(GTK_BOX(pVBox1), TRUE);
 
     // Création des labels Affichage du repère pièce
-    pEventBox1 = gtk_event_box_new ();
+    pEventBox1 = gtk_event_box_new();
     gtk_box_pack_start(GTK_BOX(pVBox1), pEventBox1, TRUE, TRUE, 0);
     gtk_widget_show(pEventBox1);
     g_signal_connect(pEventBox1, "button-press-event", G_CALLBACK(CB_ReperePiece), (void*)&global);
@@ -369,6 +372,7 @@ int main(int argc, char **argv)
 
 
     pRepPiece = gtk_frame_new("Repere Piece");
+    gtk_frame_set_label_align(GTK_FRAME(pRepPiece), 0.5, 0.5);
     gtk_container_set_border_width(GTK_CONTAINER(pRepPiece), 5);
     gtk_container_add(GTK_CONTAINER(pEventBox1), pRepPiece);
 
@@ -377,6 +381,7 @@ int main(int argc, char **argv)
 
     pHBox1 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_box_pack_start(GTK_BOX(pVBox2), pHBox1, TRUE, TRUE, 0);
+    gtk_box_set_homogeneous(GTK_BOX(pHBox1), TRUE);
     pLabel = gtk_label_new("X =");
     gtk_label_set_attributes(GTK_LABEL(pLabel), attrlist);
     gtk_box_pack_start(GTK_BOX(pHBox1), pLabel, TRUE, TRUE, 0);
@@ -389,6 +394,7 @@ int main(int argc, char **argv)
 
     pHBox1 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_box_pack_start(GTK_BOX(pVBox2), pHBox1, TRUE, TRUE, 0);
+    gtk_box_set_homogeneous(GTK_BOX(pHBox1), TRUE);
     pLabel = gtk_label_new("Y =");
     gtk_label_set_attributes(GTK_LABEL(pLabel), attrlist);
     gtk_box_pack_start(GTK_BOX(pHBox1), pLabel, TRUE, TRUE, 0);
@@ -401,6 +407,7 @@ int main(int argc, char **argv)
 
     pHBox1 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_box_pack_start(GTK_BOX(pVBox2), pHBox1, TRUE, TRUE, 0);
+    gtk_box_set_homogeneous(GTK_BOX(pHBox1), TRUE);
     pLabel = gtk_label_new("Z =");
     gtk_label_set_attributes(GTK_LABEL(pLabel), attrlist);
     gtk_box_pack_start(GTK_BOX(pHBox1), pLabel, TRUE, TRUE, 0);
@@ -413,7 +420,7 @@ int main(int argc, char **argv)
 
 
     // Création des labels Affichage du repère fraiseuse
-    pEventBox2 = gtk_event_box_new ();
+    pEventBox2 = gtk_event_box_new();
     gtk_box_pack_start(GTK_BOX(pVBox1), pEventBox2, TRUE, TRUE, 0);
     gtk_widget_show(pEventBox2);
     g_signal_connect(pEventBox2, "button-press-event", G_CALLBACK(CB_RepereFraiseuse), (void*)&global);
@@ -421,14 +428,16 @@ int main(int argc, char **argv)
     gdk_window_set_cursor(gtk_widget_get_window(pEventBox2), pHandCursor);
 
     pRepFraiseuse = gtk_frame_new("Repere Fraiseuse");
+    gtk_frame_set_label_align(GTK_FRAME(pRepFraiseuse), 0.5, 0.5);
     gtk_container_set_border_width(GTK_CONTAINER(pRepFraiseuse), 5);
-    gtk_container_add (GTK_CONTAINER(pEventBox2), pRepFraiseuse);
+    gtk_container_add(GTK_CONTAINER(pEventBox2), pRepFraiseuse);
 
     pVBox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     gtk_container_add(GTK_CONTAINER(pRepFraiseuse), pVBox2);
 
     pHBox1 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_box_pack_start(GTK_BOX(pVBox2), pHBox1, TRUE, TRUE, 0);
+    gtk_box_set_homogeneous(GTK_BOX(pHBox1), TRUE);
     pLabel = gtk_label_new("X =");
     gtk_label_set_attributes(GTK_LABEL(pLabel), attrlist);
     gtk_box_pack_start(GTK_BOX(pHBox1), pLabel, TRUE, TRUE, 0);
@@ -441,6 +450,7 @@ int main(int argc, char **argv)
 
     pHBox1 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_box_pack_start(GTK_BOX(pVBox2), pHBox1, TRUE, TRUE, 0);
+    gtk_box_set_homogeneous(GTK_BOX(pHBox1), TRUE);
     pLabel = gtk_label_new("Y =");
     gtk_label_set_attributes(GTK_LABEL(pLabel), attrlist);
     gtk_box_pack_start(GTK_BOX(pHBox1), pLabel, TRUE, TRUE, 0);
@@ -453,6 +463,7 @@ int main(int argc, char **argv)
 
     pHBox1 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_box_pack_start(GTK_BOX(pVBox2), pHBox1, TRUE, TRUE, 0);
+    gtk_box_set_homogeneous(GTK_BOX(pHBox1), TRUE);
     pLabel = gtk_label_new("Z =");
     gtk_label_set_attributes(GTK_LABEL(pLabel), attrlist);
     gtk_box_pack_start(GTK_BOX(pHBox1), pLabel, TRUE, TRUE, 0);

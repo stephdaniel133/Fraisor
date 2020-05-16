@@ -133,6 +133,7 @@ void Envoi_Reset_Axe_Fraiseuse(char Axe, global_t* pGlobal)
     {
         g_mutex_lock(pGlobal->Mutex_EnvoiPortSerie);
         RS232_SendBuf(pGlobal->comport_number, buffer, buffer[0]);
+        g_usleep(100000);
         g_mutex_unlock(pGlobal->Mutex_EnvoiPortSerie);
     }
     else
@@ -173,6 +174,7 @@ void Envoi_Changement_Repere_Piece(char Axe, float valeur, global_t* pGlobal)
     {
         g_mutex_lock(pGlobal->Mutex_EnvoiPortSerie);
         RS232_SendBuf(pGlobal->comport_number, buffer, buffer[0]);
+        g_usleep(100000);
         g_mutex_unlock(pGlobal->Mutex_EnvoiPortSerie);
     }
     else
