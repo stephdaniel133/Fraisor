@@ -184,7 +184,7 @@ void UpdateLabels(global_t* pGlobal)
             gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemStop), FALSE);
             gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemPause), FALSE);
             gtk_text_view_set_editable(GTK_TEXT_VIEW(pGlobal->pTextView), TRUE);
-            print_warning(pGlobal, "%s", "Butee X min atteinte !\n");
+            print_warning(pGlobal, "%s", "Butee X max atteinte !\n");
         }
 
 
