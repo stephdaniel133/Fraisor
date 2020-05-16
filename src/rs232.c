@@ -3,9 +3,9 @@
 *
 * Author: Teunis van Beelen
 *
-* Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017 Teunis van Beelen
+* Copyright (C) 2005 - 2019 Teunis van Beelen
 *
-* Email: teuniz@gmail.com
+* Email: teuniz@protonmail.com
 *
 ***************************************************************************
 *
@@ -26,8 +26,8 @@
 */
 
 
-/* Last revision: November 22, 2017 */
-
+/* Last revision: May 31, 2019 */
+/* Added support for hardware flow control using RTS and CTS lines */
 /* For more info and how to use this library, visit: http://www.teuniz.net/RS-232/ */
 
 
@@ -45,16 +45,16 @@ int Cport[RS232_PORTNR],
 struct termios new_port_settings,
        old_port_settings[RS232_PORTNR];
 
-char *comports[RS232_PORTNR]={"/dev/ttyS0","/dev/ttyS1","/dev/ttyS2","/dev/ttyS3","/dev/ttyS4","/dev/ttyS5",
-                       "/dev/ttyS6","/dev/ttyS7","/dev/ttyS8","/dev/ttyS9","/dev/ttyS10","/dev/ttyS11",
-                       "/dev/ttyS12","/dev/ttyS13","/dev/ttyS14","/dev/ttyS15","/dev/ttyUSB0",
-                       "/dev/ttyUSB1","/dev/ttyUSB2","/dev/ttyUSB3","/dev/ttyUSB4","/dev/ttyUSB5",
-                       "/dev/ttyAMA0","/dev/ttyAMA1","/dev/ttyACM0","/dev/ttyACM1",
-                       "/dev/rfcomm0","/dev/rfcomm1","/dev/ircomm0","/dev/ircomm1",
-                       "/dev/cuau0","/dev/cuau1","/dev/cuau2","/dev/cuau3",
-                       "/dev/cuaU0","/dev/cuaU1","/dev/cuaU2","/dev/cuaU3"};
+const char *comports[RS232_PORTNR]={"/dev/ttyS0","/dev/ttyS1","/dev/ttyS2","/dev/ttyS3","/dev/ttyS4","/dev/ttyS5",
+                                    "/dev/ttyS6","/dev/ttyS7","/dev/ttyS8","/dev/ttyS9","/dev/ttyS10","/dev/ttyS11",
+                                    "/dev/ttyS12","/dev/ttyS13","/dev/ttyS14","/dev/ttyS15","/dev/ttyUSB0",
+                                    "/dev/ttyUSB1","/dev/ttyUSB2","/dev/ttyUSB3","/dev/ttyUSB4","/dev/ttyUSB5",
+                                    "/dev/ttyAMA0","/dev/ttyAMA1","/dev/ttyACM0","/dev/ttyACM1",
+                                    "/dev/rfcomm0","/dev/rfcomm1","/dev/ircomm0","/dev/ircomm1",
+                                    "/dev/cuau0","/dev/cuau1","/dev/cuau2","/dev/cuau3",
+                                    "/dev/cuaU0","/dev/cuaU1","/dev/cuaU2","/dev/cuaU3"};
 
-int RS232_OpenComport(int comport_number, int baudrate, const char *mode)
+int RS232_OpenComport(int comport_number, int baudrate, const char *mode, int flowctrl)
 {
   int baudr,
       status;
@@ -220,6 +220,10 @@ http://man7.org/linux/man-pages/man3/termios.3.html
   memset(&new_port_settings, 0, sizeof(new_port_settings));  /* clear the new struct */
 
   new_port_settings.c_cflag = cbits | cpar | bstop | CLOCAL | CREAD;
+  if(flowctrl)
+  {
+    new_port_settings.c_cflag |= CRTSCTS;
+  }
   new_port_settings.c_iflag = ipar;
   new_port_settings.c_oflag = 0;
   new_port_settings.c_lflag = 0;
@@ -368,6 +372,17 @@ int RS232_IsDCDEnabled(int comport_number)
 }
 
 
+int RS232_IsRINGEnabled(int comport_number)
+{
+  int status;
+
+  ioctl(Cport[comport_number], TIOCMGET, &status);
+
+  if(status&TIOCM_RNG) return(1);
+  else return(0);
+}
+
+
 int RS232_IsCTSEnabled(int comport_number)
 {
   int status;
@@ -482,20 +497,24 @@ void RS232_flushRXTX(int comport_number)
 
 #else  /* windows */
 
-//#define RS232_PORTNR  16
+//#define RS232_PORTNR  32
 
 HANDLE Cport[RS232_PORTNR];
 
 
-char *comports[RS232_PORTNR]={"\\\\.\\COM1",  "\\\\.\\COM2",  "\\\\.\\COM3",  "\\\\.\\COM4",
-                              "\\\\.\\COM5",  "\\\\.\\COM6",  "\\\\.\\COM7",  "\\\\.\\COM8",
-                              "\\\\.\\COM9",  "\\\\.\\COM10", "\\\\.\\COM11", "\\\\.\\COM12",
-                              "\\\\.\\COM13", "\\\\.\\COM14", "\\\\.\\COM15", "\\\\.\\COM16"};
+const char *comports[RS232_PORTNR]={"\\\\.\\COM1",  "\\\\.\\COM2",  "\\\\.\\COM3",  "\\\\.\\COM4",
+                                    "\\\\.\\COM5",  "\\\\.\\COM6",  "\\\\.\\COM7",  "\\\\.\\COM8",
+                                    "\\\\.\\COM9",  "\\\\.\\COM10", "\\\\.\\COM11", "\\\\.\\COM12",
+                                    "\\\\.\\COM13", "\\\\.\\COM14", "\\\\.\\COM15", "\\\\.\\COM16",
+                                    "\\\\.\\COM17", "\\\\.\\COM18", "\\\\.\\COM19", "\\\\.\\COM20",
+                                    "\\\\.\\COM21", "\\\\.\\COM22", "\\\\.\\COM23", "\\\\.\\COM24",
+                                    "\\\\.\\COM25", "\\\\.\\COM26", "\\\\.\\COM27", "\\\\.\\COM28",
+                                    "\\\\.\\COM29", "\\\\.\\COM30", "\\\\.\\COM31", "\\\\.\\COM32"};
 
 char mode_str[128];
 
 
-int RS232_OpenComport(int comport_number, int baudrate, const char *mode)
+int RS232_OpenComport(int comport_number, int baudrate, const char *mode, int flowctrl)
 {
   if((comport_number>=RS232_PORTNR)||(comport_number<0))
   {
@@ -533,7 +552,15 @@ int RS232_OpenComport(int comport_number, int baudrate, const char *mode)
                    break;
     case  500000 : strcpy(mode_str, "baud=500000");
                    break;
+    case  921600 : strcpy(mode_str, "baud=921600");
+                   break;
     case 1000000 : strcpy(mode_str, "baud=1000000");
+                   break;
+    case 1500000 : strcpy(mode_str, "baud=1500000");
+                   break;
+    case 2000000 : strcpy(mode_str, "baud=2000000");
+                   break;
+    case 3000000 : strcpy(mode_str, "baud=3000000");
                    break;
     default      : printf("invalid baudrate\n");
                    return(1);
@@ -588,12 +615,21 @@ int RS232_OpenComport(int comport_number, int baudrate, const char *mode)
               break;
   }
 
-  strcat(mode_str, " dtr=on rts=on");
+  if(flowctrl)
+  {
+    strcat(mode_str, " xon=off to=off odsr=off dtr=on rts=off");
+  }
+  else
+  {
+    strcat(mode_str, " xon=off to=off odsr=off dtr=on rts=on");
+  }
 
 /*
 http://msdn.microsoft.com/en-us/library/windows/desktop/aa363145%28v=vs.85%29.aspx
 
 http://technet.microsoft.com/en-us/library/cc732236.aspx
+
+https://docs.microsoft.com/en-us/windows/desktop/api/winbase/ns-winbase-_dcb
 */
 
   Cport[comport_number] = CreateFileA(comports[comport_number],
@@ -619,6 +655,12 @@ http://technet.microsoft.com/en-us/library/cc732236.aspx
     printf("unable to set comport dcb settings\n");
     CloseHandle(Cport[comport_number]);
     return(1);
+  }
+
+  if(flowctrl)
+  {
+    port_settings.fOutxCtsFlow = TRUE;
+    port_settings.fRtsControl = RTS_CONTROL_HANDSHAKE;
   }
 
   if(!SetCommState(Cport[comport_number], &port_settings))
@@ -701,6 +743,17 @@ int RS232_IsDCDEnabled(int comport_number)
   GetCommModemStatus(Cport[comport_number], (LPDWORD)((void *)&status));
 
   if(status&MS_RLSD_ON) return(1);
+  else return(0);
+}
+
+
+int RS232_IsRINGEnabled(int comport_number)
+{
+  int status;
+
+  GetCommModemStatus(Cport[comport_number], (LPDWORD)((void *)&status));
+
+  if(status&MS_RING_ON) return(1);
   else return(0);
 }
 
@@ -815,9 +868,9 @@ char* RS232_GetPortName(int index)
     if(index < RS232_PORTNR)
     {
 #if defined(__linux__) || defined(__FreeBSD__)   /* Linux & FreeBSD */
-        return (comports[index] + strlen("/dev/"));
+        return((char*)comports[index] + strlen("/dev/"));
 #else  /* windows */
-        return (comports[index] + strlen("\\\\.\\"));
+        return((char*)comports[index] + strlen("\\\\.\\"));
 #endif
     }
     else
@@ -825,12 +878,3 @@ char* RS232_GetPortName(int index)
         return "\0";
     }
 }
-
-
-
-
-
-
-
-
-

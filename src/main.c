@@ -147,7 +147,7 @@ int main(int argc, char **argv)
     {
         strcpy(nomportcom, RS232_GetPortName(comport));
         printf("\nTentative d'ouverture du port %s : ", nomportcom);
-        if(!RS232_OpenComport(comport, 115200, mode))
+        if(!RS232_OpenComport(comport, 115200, mode, 0))
         {
             RS232_CloseComport(comport);
             printf("OK\n");

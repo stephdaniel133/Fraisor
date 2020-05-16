@@ -290,7 +290,7 @@ void CB_Connecter(GtkWidget* pWidget, global_t* pGlobal)
     {
         printf("\nClique sur Connecter, connexion sur %s\n", RS232_GetPortName(pGlobal->comport_number));
 
-        if(RS232_OpenComport(pGlobal->comport_number, 115200, mode))
+        if(RS232_OpenComport(pGlobal->comport_number, 115200, mode, 0))
         {
             pGlobal->comport_open = 1;
             print_info(pGlobal, "%s %s", "\nImpossible d'ouvrir le port serie", RS232_GetPortName(pGlobal->comport_number));
