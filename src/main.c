@@ -71,17 +71,30 @@ int main(int argc, char **argv)
     // Initialisation de GTK+
     gtk_init(&argc, &argv);
 
+
+
     //Creation des tailles de la police des labels
-    PangoAttrList *attrlist = pango_attr_list_new();
-    PangoAttribute *attrlabel = pango_attr_size_new_absolute(30 * PANGO_SCALE);
-    pango_attr_list_insert(attrlist, attrlabel);
+    PangoAttrList *attrlist;
+    PangoAttribute *attr;
+    PangoFontDescription *df;
+
+    attrlist = pango_attr_list_new();
+
+    df = pango_font_description_new();
+    pango_font_description_set_family(df, "Liberation Mono"); //police a chasse fixe
+    pango_font_description_set_size(df, 20 * PANGO_SCALE);
+
+    attr = pango_attr_font_desc_new(df);
+    pango_attr_list_insert(attrlist, attr);
+
+
 
     // Création de la fenêtre
     global.pMainWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     g_signal_connect(G_OBJECT(global.pMainWindow), "delete-event", G_CALLBACK(CB_Delete_Event), (void*)&global);
     gtk_window_set_decorated(GTK_WINDOW(global.pMainWindow), TRUE);
     gtk_window_set_title(GTK_WINDOW(global.pMainWindow), "Fraizor");
-    gtk_window_set_default_size(GTK_WINDOW(global.pMainWindow), 800, 700);
+    gtk_window_set_default_size(GTK_WINDOW(global.pMainWindow), 750, 700);
     gtk_window_set_position(GTK_WINDOW(global.pMainWindow), GTK_WIN_POS_CENTER);
 
     // Creation de la box verticale
@@ -381,42 +394,39 @@ int main(int argc, char **argv)
 
     pHBox1 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_box_pack_start(GTK_BOX(pVBox2), pHBox1, TRUE, TRUE, 0);
-    gtk_box_set_homogeneous(GTK_BOX(pHBox1), TRUE);
-    pLabel = gtk_label_new("X =");
+    pLabel = gtk_label_new(" X =");
     gtk_label_set_attributes(GTK_LABEL(pLabel), attrlist);
-    gtk_box_pack_start(GTK_BOX(pHBox1), pLabel, TRUE, TRUE, 0);
-    pLabel = gtk_label_new("mm");
+    gtk_box_pack_start(GTK_BOX(pHBox1), pLabel, FALSE, FALSE, 0);
+    pLabel = gtk_label_new("   mm ");
     gtk_label_set_attributes(GTK_LABEL(pLabel), attrlist);
-    gtk_box_pack_end(GTK_BOX(pHBox1), pLabel, TRUE, TRUE, 0);
+    gtk_box_pack_end(GTK_BOX(pHBox1), pLabel, FALSE, FALSE, 0);
     global.pLabelXmm = gtk_label_new("0,00");
     gtk_label_set_attributes(GTK_LABEL(global.pLabelXmm), attrlist);
-    gtk_box_pack_end(GTK_BOX(pHBox1), global.pLabelXmm, TRUE, TRUE, 0);
+    gtk_box_pack_end(GTK_BOX(pHBox1), global.pLabelXmm, FALSE, FALSE, 0);
 
     pHBox1 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_box_pack_start(GTK_BOX(pVBox2), pHBox1, TRUE, TRUE, 0);
-    gtk_box_set_homogeneous(GTK_BOX(pHBox1), TRUE);
-    pLabel = gtk_label_new("Y =");
+    pLabel = gtk_label_new(" Y =");
     gtk_label_set_attributes(GTK_LABEL(pLabel), attrlist);
-    gtk_box_pack_start(GTK_BOX(pHBox1), pLabel, TRUE, TRUE, 0);
-    pLabel = gtk_label_new("mm");
+    gtk_box_pack_start(GTK_BOX(pHBox1), pLabel, FALSE, FALSE, 0);
+    pLabel = gtk_label_new("   mm ");
     gtk_label_set_attributes(GTK_LABEL(pLabel), attrlist);
-    gtk_box_pack_end(GTK_BOX(pHBox1), pLabel, TRUE, TRUE, 0);
+    gtk_box_pack_end(GTK_BOX(pHBox1), pLabel, FALSE, FALSE, 0);
     global.pLabelYmm = gtk_label_new("0,00");
     gtk_label_set_attributes(GTK_LABEL(global.pLabelYmm), attrlist);
-    gtk_box_pack_start(GTK_BOX(pHBox1), global.pLabelYmm, TRUE, TRUE, 0);
+    gtk_box_pack_end(GTK_BOX(pHBox1), global.pLabelYmm, FALSE, FALSE, 0);
 
     pHBox1 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_box_pack_start(GTK_BOX(pVBox2), pHBox1, TRUE, TRUE, 0);
-    gtk_box_set_homogeneous(GTK_BOX(pHBox1), TRUE);
-    pLabel = gtk_label_new("Z =");
+    pLabel = gtk_label_new(" Z =");
     gtk_label_set_attributes(GTK_LABEL(pLabel), attrlist);
-    gtk_box_pack_start(GTK_BOX(pHBox1), pLabel, TRUE, TRUE, 0);
-    pLabel = gtk_label_new("mm");
+    gtk_box_pack_start(GTK_BOX(pHBox1), pLabel, FALSE, FALSE, 0);
+    pLabel = gtk_label_new("   mm ");
     gtk_label_set_attributes(GTK_LABEL(pLabel), attrlist);
-    gtk_box_pack_end(GTK_BOX(pHBox1), pLabel, TRUE, TRUE, 0);
+    gtk_box_pack_end(GTK_BOX(pHBox1), pLabel, FALSE, FALSE, 0);
     global.pLabelZmm = gtk_label_new("0,00");
     gtk_label_set_attributes(GTK_LABEL(global.pLabelZmm), attrlist);
-    gtk_box_pack_start(GTK_BOX(pHBox1), global.pLabelZmm, TRUE, TRUE, 0);
+    gtk_box_pack_end(GTK_BOX(pHBox1), global.pLabelZmm, FALSE, FALSE, 0);
 
 
     // Création des labels Affichage du repère fraiseuse
@@ -437,42 +447,39 @@ int main(int argc, char **argv)
 
     pHBox1 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_box_pack_start(GTK_BOX(pVBox2), pHBox1, TRUE, TRUE, 0);
-    gtk_box_set_homogeneous(GTK_BOX(pHBox1), TRUE);
-    pLabel = gtk_label_new("X =");
+    pLabel = gtk_label_new(" X =");
     gtk_label_set_attributes(GTK_LABEL(pLabel), attrlist);
-    gtk_box_pack_start(GTK_BOX(pHBox1), pLabel, TRUE, TRUE, 0);
-    pLabel = gtk_label_new("pas");
+    gtk_box_pack_start(GTK_BOX(pHBox1), pLabel, FALSE, FALSE, 0);
+    pLabel = gtk_label_new("     pas ");
     gtk_label_set_attributes(GTK_LABEL(pLabel), attrlist);
-    gtk_box_pack_end(GTK_BOX(pHBox1), pLabel, TRUE, TRUE, 0);
+    gtk_box_pack_end(GTK_BOX(pHBox1), pLabel, FALSE, FALSE, 0);
     global.pLabelXpas = gtk_label_new("0");
     gtk_label_set_attributes(GTK_LABEL(global.pLabelXpas), attrlist);
-    gtk_box_pack_start(GTK_BOX(pHBox1), global.pLabelXpas, TRUE, TRUE, 0);
+    gtk_box_pack_end(GTK_BOX(pHBox1), global.pLabelXpas, FALSE, FALSE, 0);
 
     pHBox1 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_box_pack_start(GTK_BOX(pVBox2), pHBox1, TRUE, TRUE, 0);
-    gtk_box_set_homogeneous(GTK_BOX(pHBox1), TRUE);
-    pLabel = gtk_label_new("Y =");
+    pLabel = gtk_label_new(" Y =");
     gtk_label_set_attributes(GTK_LABEL(pLabel), attrlist);
-    gtk_box_pack_start(GTK_BOX(pHBox1), pLabel, TRUE, TRUE, 0);
-    pLabel = gtk_label_new("pas");
+    gtk_box_pack_start(GTK_BOX(pHBox1), pLabel, FALSE, FALSE, 0);
+    pLabel = gtk_label_new("     pas ");
     gtk_label_set_attributes(GTK_LABEL(pLabel), attrlist);
-    gtk_box_pack_end(GTK_BOX(pHBox1), pLabel, TRUE, TRUE, 0);
+    gtk_box_pack_end(GTK_BOX(pHBox1), pLabel, FALSE, FALSE, 0);
     global.pLabelYpas = gtk_label_new("0");
     gtk_label_set_attributes(GTK_LABEL(global.pLabelYpas), attrlist);
-    gtk_box_pack_start(GTK_BOX(pHBox1), global.pLabelYpas, TRUE, TRUE, 0);
+    gtk_box_pack_end(GTK_BOX(pHBox1), global.pLabelYpas, FALSE, FALSE, 0);
 
     pHBox1 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_box_pack_start(GTK_BOX(pVBox2), pHBox1, TRUE, TRUE, 0);
-    gtk_box_set_homogeneous(GTK_BOX(pHBox1), TRUE);
-    pLabel = gtk_label_new("Z =");
+    pLabel = gtk_label_new(" Z =");
     gtk_label_set_attributes(GTK_LABEL(pLabel), attrlist);
-    gtk_box_pack_start(GTK_BOX(pHBox1), pLabel, TRUE, TRUE, 0);
-    pLabel = gtk_label_new("pas");
+    gtk_box_pack_start(GTK_BOX(pHBox1), pLabel, FALSE, FALSE, 0);
+    pLabel = gtk_label_new("     pas ");
     gtk_label_set_attributes(GTK_LABEL(pLabel), attrlist);
-    gtk_box_pack_end(GTK_BOX(pHBox1), pLabel, TRUE, TRUE, 0);
+    gtk_box_pack_end(GTK_BOX(pHBox1), pLabel, FALSE, FALSE, 0);
     global.pLabelZpas = gtk_label_new("0");
     gtk_label_set_attributes(GTK_LABEL(global.pLabelZpas), attrlist);
-    gtk_box_pack_start(GTK_BOX(pHBox1), global.pLabelZpas, TRUE, TRUE, 0);
+    gtk_box_pack_end(GTK_BOX(pHBox1), global.pLabelZpas, FALSE, FALSE, 0);
 
 
 
