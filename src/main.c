@@ -25,8 +25,8 @@ int main(int argc, char **argv)
     static GtkWidget* pBarreMenu        = NULL;
     static GtkWidget* pMenu             = NULL;
     static GtkWidget* pMenuItem         = NULL;
-    int        comport;
-    char       nomportcom[50];
+    int    comport;
+    char   nomportcom[50];
     static GSList*    pList;
 
     static GtkWidget* pToolBar          = NULL;
@@ -56,7 +56,7 @@ int main(int argc, char **argv)
 
     static GtkWidget* pStatusBar        = NULL;
 
-    gchar*     sUtf8             = NULL;
+    gchar* sUtf8             = NULL;
     static char mode[]={'8', 'N', '1', 0};
 
 //--------------------------------------------------------------------------------------------------------
@@ -101,11 +101,6 @@ int main(int argc, char **argv)
     pVBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     gtk_container_add(GTK_CONTAINER(global.pMainWindow), pVBox);
 
-
-    // Creation de la zone de texte
-    global.pTextView = gtk_text_view_new();
-    pTextBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(global.pTextView));
-    g_signal_connect (G_OBJECT(pTextBuffer), "changed", G_CALLBACK(CB_TextView_Modifie), (void*)&global);
 
     // Création de la barre de status
     pStatusBar = gtk_statusbar_new();
@@ -482,14 +477,25 @@ int main(int argc, char **argv)
     gtk_box_pack_end(GTK_BOX(pHBox1), global.pLabelZpas, FALSE, FALSE, 0);
 
 
+    // Creation de la zone de texte
+    global.pTextView = gtk_text_view_new();
+    pTextBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(global.pTextView));
+    gtk_text_buffer_set_text(pTextBuffer, "G0 X100 Y50 Z100\nG1 X120 Y70 Z190", -1);
+    GtkCssProvider *provider;
+    GtkStyleContext *context;
+    provider = gtk_css_provider_new();
+    //https://developer.gnome.org/gtk3/stable/chap-css-properties.html Table 3
+    const gchar *textformat = "textview { font: 18px Liberation Mono; } text { color: black; }";
+    gtk_css_provider_load_from_data(provider, textformat, -1, NULL);
+    context = gtk_widget_get_style_context(global.pTextView);
+    gtk_style_context_add_provider(context, GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
     // Insertion de la zone de text dans la fenetre
-    pScrolledWindow = gtk_scrolled_window_new (NULL, NULL);
-    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (pScrolledWindow), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+    pScrolledWindow = gtk_scrolled_window_new(NULL, NULL);
+    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW(pScrolledWindow), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
     gtk_container_set_border_width(GTK_CONTAINER(global.pTextView), 5);
     gtk_container_add(GTK_CONTAINER(pScrolledWindow), global.pTextView);
     gtk_box_pack_start(GTK_BOX(pVBox), pScrolledWindow, TRUE, TRUE, 0);
-
 
     // Insertion dans la fenetre de la barre de status
     gtk_box_pack_end(GTK_BOX(pVBox), pStatusBar, FALSE, FALSE, 0);
