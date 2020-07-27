@@ -480,7 +480,7 @@ int main(int argc, char **argv)
     // Creation de la zone de texte
     global.pTextView = gtk_text_view_new();
     pTextBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(global.pTextView));
-    gtk_text_buffer_set_text(pTextBuffer, "G0 X100 Y50 Z100\nG1 X120 Y70 Z190", -1);
+    gtk_text_buffer_set_text(pTextBuffer, "G0 X0 Y0 Z0", -1);
     GtkCssProvider *provider;
     GtkStyleContext *context;
     provider = gtk_css_provider_new();
