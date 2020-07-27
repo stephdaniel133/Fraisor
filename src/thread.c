@@ -313,12 +313,13 @@ void Thread_Reception(global_t* pGlobal)
                 pGlobal->status = Lit_Octet(pGlobal);
                 g_mutex_unlock(pGlobal->Mutex_UpdateLabel);
             }
-            else if(taille == 0x03)  //Surligne la ligne en cours d'execution dans la textbox
+            else if(taille == 0x05)  //Surligne la ligne en cours d'execution dans la textbox
             {
                 //g_usleep(1*1000);
                 temp[0] = Lit_Octet(pGlobal);
                 temp[1] = Lit_Octet(pGlobal);
-                temp[2] = '\n';
+                temp[2] = Lit_Octet(pGlobal);
+                temp[3] = Lit_Octet(pGlobal);
 
                 if((temp[0] == 'O') && (temp[1]=='K'))
                 {
@@ -326,7 +327,7 @@ void Thread_Reception(global_t* pGlobal)
                     pGlobal->LigneProg++;
                     LigneProg = pGlobal->LigneProg;
                     g_mutex_unlock(pGlobal->Mutex_UpdateLabel);
-                    printf("Ligne Executee : %u\n", LigneProg);
+                    printf("Ligne Executee : %u, instruction : %u, %u\n", LigneProg, temp[2], temp[3]);
                 }
             }
             else
