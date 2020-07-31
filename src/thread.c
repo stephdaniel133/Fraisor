@@ -66,7 +66,7 @@ void Thread_LectureStop(global_t* pGlobal)
                             printf("%s\n", buffer_ligne);
                             Envoi_Ligne_Instruction(buffer_ligne, gtk_text_iter_get_offset(&iter)-gtk_text_iter_get_offset(&start), pGlobal);
                             g_mutex_unlock(pGlobal->Mutex_UpdateLabel);
-                            g_usleep(10*1000); //On laisse le temps au dsPIC de traiter la ligne pendant 20ms
+                            g_usleep(10*1000); //On laisse le temps au dsPIC de traiter la ligne pendant 10ms
                         }
                         else    //Sinon, c'est qu'on a atteint la fin du fichier
                         {
@@ -114,9 +114,10 @@ void Thread_LectureStop(global_t* pGlobal)
 void UpdateLabels(global_t* pGlobal)
 {
     static uint8_t status = 0;
+    uint8_t Fraiseuse_status;
     GtkTextBuffer *buffer = NULL;
-    uint32_t LigneProg = 0;
-    uint32_t OldLigneProg = 0;
+    //uint32_t LigneProg = 0;
+    //uint32_t OldLigneProg = 0;
     GtkTextIter startExec;
     GtkTextIter endExec;
 
@@ -151,39 +152,24 @@ void UpdateLabels(global_t* pGlobal)
         gtk_label_set_text(GTK_LABEL(pGlobal->pLabelZpas), pGlobal->buffer);
 
 
-        if((0x01 == (pGlobal->status & 0x01)) && (status != pGlobal->status))
+        if(0x01 == (pGlobal->status & 0x01))
         {
-            gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemLecture), FALSE);
-            gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemStop), TRUE);
-            gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemPause), TRUE);
+            Fraiseuse_status = FRAISEUSE_EN_DEPLACEMENT;
         }
-        if((0x00 == (pGlobal->status & 0x01)) && (status != pGlobal->status))
+        else
         {
-            pGlobal->Etat = STOP;
-            gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemLecture), TRUE);
-            gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemStop), FALSE);
-            gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemPause), FALSE);
-            gtk_text_view_set_editable(GTK_TEXT_VIEW(pGlobal->pTextView), TRUE);
+            Fraiseuse_status = FRAISEUSE_STOP;
         }
-
 
         if((0x02 == (pGlobal->status & 0x02)) && (status != pGlobal->status))
         {
             pGlobal->Etat = STOP;
-            gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemLecture), TRUE);
-            gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemStop), FALSE);
-            gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemPause), FALSE);
-            gtk_text_view_set_editable(GTK_TEXT_VIEW(pGlobal->pTextView), TRUE);
             print_warning(pGlobal, "%s", "Butee X min atteinte !\n");
         }
 
         if((0x04 == (pGlobal->status & 0x04)) && (status != pGlobal->status))
         {
             pGlobal->Etat = STOP;
-            gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemLecture), TRUE);
-            gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemStop), FALSE);
-            gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemPause), FALSE);
-            gtk_text_view_set_editable(GTK_TEXT_VIEW(pGlobal->pTextView), TRUE);
             print_warning(pGlobal, "%s", "Butee X max atteinte !\n");
         }
 
@@ -191,20 +177,12 @@ void UpdateLabels(global_t* pGlobal)
         if((0x08 == (pGlobal->status & 0x08)) && (status != pGlobal->status))
         {
             pGlobal->Etat = STOP;
-            gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemLecture), TRUE);
-            gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemStop), FALSE);
-            gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemPause), FALSE);
-            gtk_text_view_set_editable(GTK_TEXT_VIEW(pGlobal->pTextView), TRUE);
             print_warning(pGlobal, "%s", "Butee Y min atteinte !\n");
         }
 
         if((0x10 == (pGlobal->status & 0x10)) && (status != pGlobal->status))
         {
             pGlobal->Etat = STOP;
-            gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemLecture), TRUE);
-            gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemStop), FALSE);
-            gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemPause), FALSE);
-            gtk_text_view_set_editable(GTK_TEXT_VIEW(pGlobal->pTextView), TRUE);
             print_warning(pGlobal, "%s", "Butee Y max atteinte !\n");
         }
 
@@ -212,20 +190,12 @@ void UpdateLabels(global_t* pGlobal)
         if((0x20 == (pGlobal->status & 0x20)) && (status != pGlobal->status))
         {
             pGlobal->Etat = STOP;
-            gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemLecture), TRUE);
-            gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemStop), FALSE);
-            gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemPause), FALSE);
-            gtk_text_view_set_editable(GTK_TEXT_VIEW(pGlobal->pTextView), TRUE);
             print_warning(pGlobal, "%s", "Butee Z min atteinte !\n");
         }
 
         if((0x40 == (pGlobal->status & 0x40)) && (status != pGlobal->status))
         {
             pGlobal->Etat = STOP;
-            gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemLecture), TRUE);
-            gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemStop), FALSE);
-            gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemPause), FALSE);
-            gtk_text_view_set_editable(GTK_TEXT_VIEW(pGlobal->pTextView), TRUE);
             print_warning(pGlobal, "%s", "Butee Z max atteinte !\n");
         }
 
@@ -234,33 +204,42 @@ void UpdateLabels(global_t* pGlobal)
 
 
             //Surlignage de la ligne en cours d'execution
-        if(pGlobal->Etat == LECTURE)
+//        if(pGlobal->Etat == LECTURE)
+//        {
+//            LigneProg = pGlobal->LigneProg;
+//
+//            if(LigneProg != OldLigneProg)
+//            {
+//                gtk_text_buffer_get_iter_at_line(buffer, &startExec, OldLigneProg);
+//                gtk_text_buffer_get_iter_at_line(buffer, &endExec, LigneProg + 1);
+//
+//                OldLigneProg = LigneProg;
+//                //buffer_ligne = gtk_text_buffer_get_text(buffer, &startExec, &endExec, FALSE);
+//                //printf(".....Application du Tag2 sur ligne %u :%s\n", LigneProg, buffer_ligne);
+//
+//                //gtk_text_buffer_apply_tag_by_name(buffer, "highlight", &startExec, &endExec);
+//
+//                if((LigneProg % 8) == 0)
+//                {
+//                    //gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW(pGlobal->pTextView), &endExec, 0, TRUE, 0, 0.3);
+//                }
+//            }
+//        }
+        /*else*/ if(Fraiseuse_status == FRAISEUSE_EN_DEPLACEMENT)
         {
-            LigneProg = pGlobal->LigneProg;
-
-            if(LigneProg != OldLigneProg)
-            {
-                gtk_text_buffer_get_iter_at_line(buffer, &startExec, OldLigneProg);
-                gtk_text_buffer_get_iter_at_line(buffer, &endExec, LigneProg + 1);
-
-                OldLigneProg = LigneProg;
-                //buffer_ligne = gtk_text_buffer_get_text(buffer, &startExec, &endExec, FALSE);
-                //printf(".....Application du Tag2 sur ligne %u :%s\n", LigneProg, buffer_ligne);
-
-                //gtk_text_buffer_apply_tag_by_name(buffer, "highlight", &startExec, &endExec);
-
-                if((LigneProg % 8) == 0)
-                {
-                    //gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW(pGlobal->pTextView), &endExec, 0, TRUE, 0, 0.3);
-                }
-            }
+            gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemLecture), FALSE);
+            gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemStop), TRUE);
+            gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemPause), TRUE);
         }
-        if(pGlobal->Etat == STOP)
+        else if(Fraiseuse_status == FRAISEUSE_STOP)
         {
+            gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemLecture), TRUE);
+            gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemStop), FALSE);
+            gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemPause), FALSE);
             gtk_text_buffer_get_bounds(buffer, &startExec, &endExec);
             gtk_text_buffer_remove_all_tags(buffer, &startExec, &endExec);
             gtk_text_view_set_editable(GTK_TEXT_VIEW(pGlobal->pTextView), TRUE);
-            OldLigneProg = 1;
+            //OldLigneProg = 1;
         }
 
 

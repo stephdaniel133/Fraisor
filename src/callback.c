@@ -343,6 +343,8 @@ void CB_Lecture(GtkWidget* pWidget, global_t* pGlobal)
 
 
     gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemLecture), FALSE);
+    gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemStop), TRUE);
+    gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemPause), TRUE);
 
     //Ajout d'un saut de ligne à la fin du TextView s'il n'y en a pas
     buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(pGlobal->pTextView));

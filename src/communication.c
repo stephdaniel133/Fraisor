@@ -48,7 +48,7 @@ void Envoi_Ligne_Instruction(gchar* buffer, int nb_caracteres, global_t* pGlobal
 *******************************************************/
 void Envoi_Deplacement(char axe, char posneg, global_t* pGlobal)
 {
-    char buffer[50] = "\0";
+    char buffer[100] = "\0";
     float valeurfX = 0;
     float valeurfY = 0;
     float valeurfZ = 0;
@@ -57,6 +57,7 @@ void Envoi_Deplacement(char axe, char posneg, global_t* pGlobal)
     float incrementf = 0;
     float vitessef = 0;
 
+
     g_mutex_lock(pGlobal->Mutex_UpdateLabel);
 
     valeurfX = pGlobal->Xpiece;
@@ -64,6 +65,9 @@ void Envoi_Deplacement(char axe, char posneg, global_t* pGlobal)
     valeurfZ = pGlobal->Zpiece;
 
     g_mutex_unlock(pGlobal->Mutex_UpdateLabel);
+
+    Envoi_Arret_Programme(pGlobal);
+    g_usleep(200*1000); //On attends que le dsPIC finisse d'envoyer ces dernières coordonées
 
     increment = gtk_combo_box_text_get_active_text(GTK_COMBO_BOX_TEXT(pGlobal->pComboBoxInc));
     if(strcmp(increment, "1 pas") == 0)

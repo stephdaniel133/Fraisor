@@ -20,6 +20,12 @@ enum EtatProgramme
     PAUSE
 };
 
+enum EtatFraiseuse
+{
+    FRAISEUSE_STOP,
+    FRAISEUSE_EN_DEPLACEMENT
+};
+
 typedef struct
 {
     GtkWidget *pMainWindow;
