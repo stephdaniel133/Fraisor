@@ -325,12 +325,12 @@ int main(int argc, char **argv)
 
     // Création de la ComboBox Déplacements
     global.pComboBoxInc = gtk_combo_box_text_new();
-    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(global.pComboBoxInc), "1 pas");
-    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(global.pComboBoxInc), "0,1 mm");
-    gtk_combo_box_set_active(GTK_COMBO_BOX(global.pComboBoxInc), 1);
-    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(global.pComboBoxInc), "1 mm");
-    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(global.pComboBoxInc), "5 mm");
     gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(global.pComboBoxInc), "10 mm");
+    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(global.pComboBoxInc), "5 mm");
+    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(global.pComboBoxInc), "1 mm");
+    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(global.pComboBoxInc), "0,1 mm");
+    gtk_combo_box_set_active(GTK_COMBO_BOX(global.pComboBoxInc), 3);
+    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(global.pComboBoxInc), "1 pas");
 
     gtk_grid_attach(GTK_GRID(pGrid), global.pComboBoxInc, 0, 3, 5, 1);
 
@@ -338,12 +338,12 @@ int main(int argc, char **argv)
 
     // Création de la ComboBox Vitesses
     global.pComboBoxVit = gtk_combo_box_text_new();
-    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(global.pComboBoxVit), "10 mm/min");
-    gtk_combo_box_set_active(GTK_COMBO_BOX(global.pComboBoxVit), 0);
-    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(global.pComboBoxVit), "50 mm/min");
-    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(global.pComboBoxVit), "100 mm/min");
-    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(global.pComboBoxVit), "200 mm/min");
     gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(global.pComboBoxVit), "300 mm/min");
+    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(global.pComboBoxVit), "200 mm/min");
+    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(global.pComboBoxVit), "100 mm/min");
+    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(global.pComboBoxVit), "50 mm/min");
+    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(global.pComboBoxVit), "10 mm/min");
+    gtk_combo_box_set_active(GTK_COMBO_BOX(global.pComboBoxVit), 4);
 
     gtk_grid_attach(GTK_GRID(pGrid), global.pComboBoxVit, 0, 4, 5, 1);
 
