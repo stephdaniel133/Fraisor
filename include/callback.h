@@ -29,22 +29,34 @@ void CB_Pause(GtkWidget* pWidget, global_t* pGlobal);
 
 void CB_Bouton_Xp_Click(GtkWidget* widget, global_t* pGlobal);
 void CB_Bouton_Xm_Click(GtkWidget* widget, global_t* pGlobal);
-void CB_Bouton_X_Affiche_Status(GtkWidget* widget, gpointer iContextId);
-void CB_Bouton_X_Efface_Status(GtkWidget* widget, gpointer iContextId);
+void CB_Bouton_X_Affiche_Status(GtkWidget* widget, global_t* pGlobal);
+void CB_Bouton_X_Efface_Status(GtkWidget* widget, global_t* pGlobal);
 void CB_Bouton_Yp_Click(GtkWidget* widget, global_t* pGlobal);
 void CB_Bouton_Ym_Click(GtkWidget* widget, global_t* pGlobal);
-void CB_Bouton_Y_Affiche_Status(GtkWidget* widget, gpointer iContextId);
-void CB_Bouton_Y_Efface_Status(GtkWidget* widget, gpointer iContextId);
+void CB_Bouton_Y_Affiche_Status(GtkWidget* widget, global_t* pGlobal);
+void CB_Bouton_Y_Efface_Status(GtkWidget* widget, global_t* pGlobal);
 void CB_Bouton_Zp_Click(GtkWidget* widget, global_t* pGlobal);
 void CB_Bouton_Zm_Click(GtkWidget* widget, global_t* pGlobal);
-void CB_Bouton_Z_Affiche_Status(GtkWidget* widget, gpointer iContextId);
-void CB_Bouton_Z_Efface_Status(GtkWidget* widget, gpointer iContextId);
+void CB_Bouton_Z_Affiche_Status(GtkWidget* widget, global_t* pGlobal);
+void CB_Bouton_Z_Efface_Status(GtkWidget* widget, global_t* pGlobal);
+
+void CB_DistanceDeplacement_Affiche_Status(GtkWidget* pWidget, GdkEvent* event, global_t* pGlobal);
+void CB_DistanceDeplacement_Efface_Status(GtkWidget* pWidget, GdkEvent* event, global_t* pGlobal);
+
+void CB_VitesseDeplacement_Affiche_Status(GtkWidget* pWidget, GdkEvent* event, global_t* pGlobal);
+void CB_VitesseDeplacement_Efface_Status(GtkWidget* pWidget, GdkEvent* event, global_t* pGlobal);
 
 void ComboBoxVitProg_on_changed(GtkWidget* pWidget, global_t* pGlobal);
+void CB_VitesseProgramme_Affiche_Status(GtkWidget* pWidget, GdkEvent* event, global_t* pGlobal);
+void CB_VitesseProgramme_Efface_Status(GtkWidget* pWidget, GdkEvent* event, global_t* pGlobal);
 
 void CB_ReperePiece(GtkWidget* widget, GdkEvent* event, global_t* pGlobal);
-void CB_RepereFraiseuse(GtkWidget* widget, GdkEvent* event, global_t* pGlobal);
+void CB_ReperePiece_Affiche_Status(GtkWidget* pWidget, GdkEvent* event, global_t* pGlobal);
+void CB_ReperePiece_Efface_Status(GtkWidget* pWidget, GdkEvent* event, global_t* pGlobal);
 
+void CB_RepereFraiseuse(GtkWidget* widget, GdkEvent* event, global_t* pGlobal);
+void CB_RepereFraiseuse_Affiche_Status(GtkWidget* pWidget, GdkEvent* event, global_t* pGlobal);
+void CB_RepereFraiseuse_Efface_Status(GtkWidget* pWidget, GdkEvent* event, global_t* pGlobal);
 
 void CB_TextView_Modifie(GtkWidget* widget, global_t* pGlobal);
 

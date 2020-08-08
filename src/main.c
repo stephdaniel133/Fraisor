@@ -45,16 +45,16 @@ int main(int argc, char **argv)
     static GtkWidget* pHBox1            = NULL;
     static GtkWidget* pLabel            = NULL;
     static GtkWidget* pEventBox1        = NULL;
+    static GtkWidget* pEventBox2        = NULL;
+    static GtkWidget* pEventBox3        = NULL;
+    static GtkWidget* pEventBox4        = NULL;
     static GtkWidget* pRepPiece         = NULL;
     static GdkCursor* pHandCursor       = NULL;
-    static GtkWidget* pEventBox2        = NULL;
+    static GtkWidget* pEventBox5        = NULL;
     static GtkWidget* pRepFraiseuse     = NULL;
-
 
     static GtkTextBuffer* pTextBuffer   = NULL;
     static GtkWidget* pScrolledWindow   = NULL;
-
-    static GtkWidget* pStatusBar        = NULL;
 
     gchar* sUtf8             = NULL;
     static char mode[]={'8', 'N', '1', 0};
@@ -103,7 +103,7 @@ int main(int argc, char **argv)
 
 
     // Création de la barre de status
-    pStatusBar = gtk_statusbar_new();
+    global.pStatusBar = gtk_statusbar_new();
 
     // Création du menu
     pBarreMenu = gtk_menu_bar_new();
@@ -151,7 +151,7 @@ int main(int argc, char **argv)
     pList = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(pMenuItem));
     g_signal_connect(G_OBJECT(pMenuItem), "toggled", G_CALLBACK(CB_OnRadio), (void*)&global);
 
-    for(comport = 0; comport < RS232_PORTNR ; comport++)  //Recherche des ports serie présents
+    for(comport = 0 ; comport < RS232_PORTNR ; comport++)  //Recherche des ports serie présents
     {
         strcpy(nomportcom, RS232_GetPortName(comport));
         printf("\nTentative d'ouverture du port %s : ", nomportcom);
@@ -163,6 +163,7 @@ int main(int argc, char **argv)
             gtk_menu_shell_append(GTK_MENU_SHELL(pMenu), pMenuItem);
             pList = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(pMenuItem));
             g_signal_connect(G_OBJECT(pMenuItem), "toggled", G_CALLBACK(CB_OnRadio), (void*)&global);
+            gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(pMenuItem), TRUE);
         }
         else
         {
@@ -200,18 +201,22 @@ int main(int argc, char **argv)
 
     pToolItem = gtk_tool_button_new(gtk_image_new_from_icon_name("document-new", GTK_ICON_SIZE_SMALL_TOOLBAR), "Nouveau");
     g_signal_connect(G_OBJECT(pToolItem), "clicked", G_CALLBACK(CB_Menu_Nouveau), (void*)&global);
+    gtk_widget_set_tooltip_text(GTK_WIDGET(pToolItem), "Creer un nouveau programme");
     gtk_toolbar_insert(GTK_TOOLBAR(pToolBar), pToolItem, -1);
 
     pToolItem = gtk_tool_button_new(gtk_image_new_from_icon_name("document-open", GTK_ICON_SIZE_SMALL_TOOLBAR), "Nouveau");
     g_signal_connect(G_OBJECT(pToolItem), "clicked", G_CALLBACK(CB_Menu_Ouvrir), (void*)&global);
+    gtk_widget_set_tooltip_text(GTK_WIDGET(pToolItem), "Ouvrir un programme");
     gtk_toolbar_insert(GTK_TOOLBAR(pToolBar), pToolItem, -1);
 
     pToolItem = gtk_tool_button_new(gtk_image_new_from_icon_name("document-save", GTK_ICON_SIZE_SMALL_TOOLBAR), "Nouveau");
     g_signal_connect(G_OBJECT(pToolItem), "clicked", G_CALLBACK(CB_Menu_Sauvegarder), (void*)&global);
+    gtk_widget_set_tooltip_text(GTK_WIDGET(pToolItem), "Sauvergarder le programme");
     gtk_toolbar_insert(GTK_TOOLBAR(pToolBar), pToolItem, -1);
 
     pToolItem = gtk_tool_button_new(gtk_image_new_from_icon_name("document-save-as", GTK_ICON_SIZE_SMALL_TOOLBAR), "Nouveau");
     g_signal_connect(G_OBJECT(pToolItem), "clicked", G_CALLBACK(CB_Menu_SauvegarderSous), (void*)&global);
+    gtk_widget_set_tooltip_text(GTK_WIDGET(pToolItem), "Sauvergarder le programme sous un nouveau nom");
     gtk_toolbar_insert(GTK_TOOLBAR(pToolBar), pToolItem, -1);
 
     pToolItem = gtk_separator_tool_item_new();
@@ -220,11 +225,13 @@ int main(int argc, char **argv)
 
     global.pToolItemConnecter = gtk_tool_button_new(gtk_image_new_from_icon_name("gtk-connect", GTK_ICON_SIZE_SMALL_TOOLBAR), "Connecter");
     g_signal_connect(G_OBJECT(global.pToolItemConnecter), "clicked", G_CALLBACK(CB_Connecter), (void*)&global);
+    gtk_widget_set_tooltip_text(GTK_WIDGET(global.pToolItemConnecter), "Connexion a la fraisuse");
     gtk_toolbar_insert(GTK_TOOLBAR(pToolBar), global.pToolItemConnecter, -1);
 
     global.pToolItemDeconnecter = gtk_tool_button_new(gtk_image_new_from_icon_name("gtk-disconnect", GTK_ICON_SIZE_SMALL_TOOLBAR), "Deconnecter");
     gtk_widget_set_sensitive(GTK_WIDGET(global.pToolItemDeconnecter), FALSE);
     g_signal_connect(G_OBJECT(global.pToolItemDeconnecter), "clicked", G_CALLBACK(CB_Deconnecter), (void*)&global);
+    gtk_widget_set_tooltip_text(GTK_WIDGET(global.pToolItemDeconnecter), "Deconnexion de la fraisuse");
     gtk_toolbar_insert(GTK_TOOLBAR(pToolBar), global.pToolItemDeconnecter, -1);
 
     pToolItem = gtk_separator_tool_item_new();
@@ -233,16 +240,19 @@ int main(int argc, char **argv)
 
     global.pToolItemLecture = gtk_tool_button_new(gtk_image_new_from_icon_name("media-playback-start", GTK_ICON_SIZE_SMALL_TOOLBAR), "Lire");
     g_signal_connect(G_OBJECT(global.pToolItemLecture), "clicked", G_CALLBACK(CB_Lecture), (void*)&global);
+    gtk_widget_set_tooltip_text(GTK_WIDGET(global.pToolItemLecture), "Lancer le programme");
     gtk_toolbar_insert(GTK_TOOLBAR(pToolBar), global.pToolItemLecture, -1);
 
     global.pToolItemStop = gtk_tool_button_new(gtk_image_new_from_icon_name("media-playback-stop", GTK_ICON_SIZE_SMALL_TOOLBAR), "Stop");
     gtk_widget_set_sensitive(GTK_WIDGET(global.pToolItemStop), FALSE);
     g_signal_connect(G_OBJECT(global.pToolItemStop), "clicked", G_CALLBACK(CB_Stop), (void*)&global);
+    gtk_widget_set_tooltip_text(GTK_WIDGET(global.pToolItemStop), "Arreter le programme");
     gtk_toolbar_insert(GTK_TOOLBAR(pToolBar), global.pToolItemStop, -1);
 
     global.pToolItemPause = gtk_tool_button_new(gtk_image_new_from_icon_name("media-playback-pause", GTK_ICON_SIZE_SMALL_TOOLBAR), "Pause");
     gtk_widget_set_sensitive(GTK_WIDGET(global.pToolItemPause), FALSE);
     g_signal_connect(G_OBJECT(global.pToolItemPause), "clicked", G_CALLBACK(CB_Pause), (void*)&global);
+    gtk_widget_set_tooltip_text(GTK_WIDGET(global.pToolItemPause), "Mettre en pause le programme");
     gtk_toolbar_insert(GTK_TOOLBAR(pToolBar), global.pToolItemPause, -1);
 
 
@@ -270,8 +280,8 @@ int main(int argc, char **argv)
     gtk_widget_set_vexpand(pBoutonXp, TRUE);
     gtk_grid_attach(GTK_GRID(pGrid), pBoutonXp, 2, 1, 1, 1);
     g_signal_connect(G_OBJECT(pBoutonXp), "clicked", G_CALLBACK(CB_Bouton_Xp_Click), (void*)&global);
-    g_signal_connect(G_OBJECT(pBoutonXp), "enter", G_CALLBACK(CB_Bouton_X_Affiche_Status), (GtkWidget*)pStatusBar);
-    g_signal_connect(G_OBJECT(pBoutonXp), "leave", G_CALLBACK(CB_Bouton_X_Efface_Status), (GtkWidget*)pStatusBar);
+    g_signal_connect(G_OBJECT(pBoutonXp), "enter", G_CALLBACK(CB_Bouton_X_Affiche_Status), (void*)&global);
+    g_signal_connect(G_OBJECT(pBoutonXp), "leave", G_CALLBACK(CB_Bouton_X_Efface_Status), (void*)&global);
 
     pBoutonXm = gtk_button_new_with_label("X-");
     pLabel = gtk_bin_get_child(GTK_BIN(pBoutonXm));
@@ -280,8 +290,8 @@ int main(int argc, char **argv)
     gtk_widget_set_vexpand(pBoutonXm, TRUE);
     gtk_grid_attach(GTK_GRID(pGrid), pBoutonXm, 0, 1, 1, 1);
     g_signal_connect(G_OBJECT(pBoutonXm), "clicked", G_CALLBACK(CB_Bouton_Xm_Click), (void*)&global);
-    g_signal_connect(G_OBJECT(pBoutonXm), "enter", G_CALLBACK(CB_Bouton_X_Affiche_Status), (GtkWidget*)pStatusBar);
-    g_signal_connect(G_OBJECT(pBoutonXm), "leave", G_CALLBACK(CB_Bouton_X_Efface_Status), (GtkWidget*)pStatusBar);
+    g_signal_connect(G_OBJECT(pBoutonXm), "enter", G_CALLBACK(CB_Bouton_X_Affiche_Status), (void*)&global);
+    g_signal_connect(G_OBJECT(pBoutonXm), "leave", G_CALLBACK(CB_Bouton_X_Efface_Status), (void*)&global);
 
     pBoutonYp = gtk_button_new_with_label("Y+");
     pLabel = gtk_bin_get_child(GTK_BIN(pBoutonYp));
@@ -290,8 +300,8 @@ int main(int argc, char **argv)
     gtk_widget_set_vexpand(pBoutonYp, TRUE);
     gtk_grid_attach(GTK_GRID(pGrid), pBoutonYp, 1, 0, 1, 1);
     g_signal_connect(G_OBJECT(pBoutonYp), "clicked", G_CALLBACK(CB_Bouton_Yp_Click), (void*)&global);
-    g_signal_connect(G_OBJECT(pBoutonYp), "enter", G_CALLBACK(CB_Bouton_Y_Affiche_Status), (GtkWidget*)pStatusBar);
-    g_signal_connect(G_OBJECT(pBoutonYp), "leave", G_CALLBACK(CB_Bouton_Y_Efface_Status), (GtkWidget*)pStatusBar);
+    g_signal_connect(G_OBJECT(pBoutonYp), "enter", G_CALLBACK(CB_Bouton_Y_Affiche_Status), (void*)&global);
+    g_signal_connect(G_OBJECT(pBoutonYp), "leave", G_CALLBACK(CB_Bouton_Y_Efface_Status), (void*)&global);
 
     pBoutonYm = gtk_button_new_with_label("Y-");
     pLabel = gtk_bin_get_child(GTK_BIN(pBoutonYm));
@@ -300,8 +310,8 @@ int main(int argc, char **argv)
     gtk_widget_set_vexpand(pBoutonYm, TRUE);
     gtk_grid_attach(GTK_GRID(pGrid), pBoutonYm, 1, 2, 1, 1);
     g_signal_connect(G_OBJECT(pBoutonYm), "clicked", G_CALLBACK(CB_Bouton_Ym_Click), (void*)&global);
-    g_signal_connect(G_OBJECT(pBoutonYm), "enter", G_CALLBACK(CB_Bouton_Y_Affiche_Status), (GtkWidget*)pStatusBar);
-    g_signal_connect(G_OBJECT(pBoutonYm), "leave", G_CALLBACK(CB_Bouton_Y_Efface_Status), (GtkWidget*)pStatusBar);
+    g_signal_connect(G_OBJECT(pBoutonYm), "enter", G_CALLBACK(CB_Bouton_Y_Affiche_Status), (void*)&global);
+    g_signal_connect(G_OBJECT(pBoutonYm), "leave", G_CALLBACK(CB_Bouton_Y_Efface_Status), (void*)&global);
 
     pBoutonZp = gtk_button_new_with_label("Z+");
     pLabel = gtk_bin_get_child(GTK_BIN(pBoutonZp));
@@ -310,8 +320,8 @@ int main(int argc, char **argv)
     gtk_widget_set_vexpand(pBoutonZp, TRUE);
     gtk_grid_attach(GTK_GRID(pGrid), pBoutonZp, 4, 0, 1, 1);
     g_signal_connect(G_OBJECT(pBoutonZp), "clicked", G_CALLBACK(CB_Bouton_Zp_Click), (void*)&global);
-    g_signal_connect(G_OBJECT(pBoutonZp), "enter", G_CALLBACK(CB_Bouton_Z_Affiche_Status), (GtkWidget*)pStatusBar);
-    g_signal_connect(G_OBJECT(pBoutonZp), "leave", G_CALLBACK(CB_Bouton_Z_Efface_Status), (GtkWidget*)pStatusBar);
+    g_signal_connect(G_OBJECT(pBoutonZp), "enter", G_CALLBACK(CB_Bouton_Z_Affiche_Status), (void*)&global);
+    g_signal_connect(G_OBJECT(pBoutonZp), "leave", G_CALLBACK(CB_Bouton_Z_Efface_Status), (void*)&global);
 
     pBoutonZm = gtk_button_new_with_label("Z-");
     pLabel = gtk_bin_get_child(GTK_BIN(pBoutonZm));
@@ -320,10 +330,17 @@ int main(int argc, char **argv)
     gtk_widget_set_vexpand(pBoutonZm, TRUE);
     gtk_grid_attach(GTK_GRID(pGrid), pBoutonZm, 4, 2, 1, 1);
     g_signal_connect(G_OBJECT(pBoutonZm), "clicked", G_CALLBACK(CB_Bouton_Zm_Click), (void*)&global);
-    g_signal_connect(G_OBJECT(pBoutonZm), "enter", G_CALLBACK(CB_Bouton_Z_Affiche_Status), (GtkWidget*)pStatusBar);
-    g_signal_connect(G_OBJECT(pBoutonZm), "leave", G_CALLBACK(CB_Bouton_Z_Efface_Status), (GtkWidget*)pStatusBar);
+    g_signal_connect(G_OBJECT(pBoutonZm), "enter", G_CALLBACK(CB_Bouton_Z_Affiche_Status), (void*)&global);
+    g_signal_connect(G_OBJECT(pBoutonZm), "leave", G_CALLBACK(CB_Bouton_Z_Efface_Status), (void*)&global);
 
     // Création de la ComboBox Déplacements
+    pEventBox1 = gtk_event_box_new();
+    gtk_grid_attach(GTK_GRID(pGrid), pEventBox1, 0, 3, 5, 1);
+    gtk_widget_show(pEventBox1);
+    gtk_widget_add_events(GTK_WIDGET(pEventBox1), GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK);
+    g_signal_connect(G_OBJECT(pEventBox1), "enter-notify-event", G_CALLBACK(CB_DistanceDeplacement_Affiche_Status), (void*)&global);
+    g_signal_connect(G_OBJECT(pEventBox1), "leave-notify-event", G_CALLBACK(CB_DistanceDeplacement_Efface_Status), (void*)&global);
+
     global.pComboBoxInc = gtk_combo_box_text_new();
     gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(global.pComboBoxInc), "10 mm");
     gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(global.pComboBoxInc), "5 mm");
@@ -331,12 +348,17 @@ int main(int argc, char **argv)
     gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(global.pComboBoxInc), "0,1 mm");
     gtk_combo_box_set_active(GTK_COMBO_BOX(global.pComboBoxInc), 3);
     gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(global.pComboBoxInc), "1 pas");
-
-    gtk_grid_attach(GTK_GRID(pGrid), global.pComboBoxInc, 0, 3, 5, 1);
-
+    gtk_container_add(GTK_CONTAINER(pEventBox1), global.pComboBoxInc);
 
 
     // Création de la ComboBox Vitesses
+    pEventBox2 = gtk_event_box_new();
+    gtk_grid_attach(GTK_GRID(pGrid), pEventBox2, 0, 4, 5, 1);
+    gtk_widget_show(pEventBox2);
+    gtk_widget_add_events(GTK_WIDGET(pEventBox2), GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK);
+    g_signal_connect(G_OBJECT(pEventBox2), "enter-notify-event", G_CALLBACK(CB_VitesseDeplacement_Affiche_Status), (void*)&global);
+    g_signal_connect(G_OBJECT(pEventBox2), "leave-notify-event", G_CALLBACK(CB_VitesseDeplacement_Efface_Status), (void*)&global);
+
     global.pComboBoxVit = gtk_combo_box_text_new();
     gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(global.pComboBoxVit), "300 mm/min");
     gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(global.pComboBoxVit), "200 mm/min");
@@ -344,10 +366,16 @@ int main(int argc, char **argv)
     gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(global.pComboBoxVit), "50 mm/min");
     gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(global.pComboBoxVit), "10 mm/min");
     gtk_combo_box_set_active(GTK_COMBO_BOX(global.pComboBoxVit), 4);
-
-    gtk_grid_attach(GTK_GRID(pGrid), global.pComboBoxVit, 0, 4, 5, 1);
+    gtk_container_add(GTK_CONTAINER(pEventBox2), global.pComboBoxVit);
 
     // Création de la ComboBox Vitesses Programme
+    pEventBox3 = gtk_event_box_new();
+    gtk_grid_attach(GTK_GRID(pGrid), pEventBox3, 0, 5, 5, 1);
+    gtk_widget_show(pEventBox3);
+    gtk_widget_add_events(GTK_WIDGET(pEventBox3), GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK);
+    g_signal_connect(G_OBJECT(pEventBox3), "enter-notify-event", G_CALLBACK(CB_VitesseProgramme_Affiche_Status), (void*)&global);
+    g_signal_connect(G_OBJECT(pEventBox3), "leave-notify-event", G_CALLBACK(CB_VitesseProgramme_Efface_Status), (void*)&global);
+
     global.pComboBoxVitProg = gtk_combo_box_text_new();
     gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(global.pComboBoxVitProg), "100 %");
     gtk_combo_box_set_active(GTK_COMBO_BOX(global.pComboBoxVitProg), 0);
@@ -361,8 +389,7 @@ int main(int argc, char **argv)
     gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(global.pComboBoxVitProg), "20 %");
     gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(global.pComboBoxVitProg), "10 %");
     g_signal_connect(G_OBJECT(global.pComboBoxVitProg), "changed", G_CALLBACK(ComboBoxVitProg_on_changed), (void*)&global);
-
-    gtk_grid_attach(GTK_GRID(pGrid), global.pComboBoxVitProg, 0, 5, 5, 1);
+    gtk_container_add(GTK_CONTAINER(pEventBox3), global.pComboBoxVitProg);
 
     // Creation de la box verticale des 2 repères
     pVBox1 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
@@ -370,19 +397,21 @@ int main(int argc, char **argv)
     gtk_box_set_homogeneous(GTK_BOX(pVBox1), TRUE);
 
     // Création des labels Affichage du repère pièce
-    pEventBox1 = gtk_event_box_new();
-    gtk_box_pack_start(GTK_BOX(pVBox1), pEventBox1, TRUE, TRUE, 0);
-    gtk_widget_show(pEventBox1);
-    g_signal_connect(pEventBox1, "button-press-event", G_CALLBACK(CB_ReperePiece), (void*)&global);
-    gtk_widget_realize(pEventBox1);
+    pEventBox4 = gtk_event_box_new();
+    gtk_box_pack_start(GTK_BOX(pVBox1), pEventBox4, TRUE, TRUE, 0);
+    gtk_widget_show(pEventBox4);
+    g_signal_connect(pEventBox4, "button-press-event", G_CALLBACK(CB_ReperePiece), (void*)&global);
+    g_signal_connect(G_OBJECT(pEventBox4), "enter-notify-event", G_CALLBACK(CB_ReperePiece_Affiche_Status), (void*)&global);
+    g_signal_connect(G_OBJECT(pEventBox4), "leave-notify-event", G_CALLBACK(CB_ReperePiece_Efface_Status), (void*)&global);
+    gtk_widget_realize(pEventBox4);
     pHandCursor = gdk_cursor_new_for_display(gdk_screen_get_display(gdk_screen_get_default()), GDK_HAND2);
-    gdk_window_set_cursor(gtk_widget_get_window(pEventBox1), pHandCursor);
+    gdk_window_set_cursor(gtk_widget_get_window(pEventBox4), pHandCursor);
 
 
     pRepPiece = gtk_frame_new("Repere Piece");
     gtk_frame_set_label_align(GTK_FRAME(pRepPiece), 0.5, 0.5);
     gtk_container_set_border_width(GTK_CONTAINER(pRepPiece), 5);
-    gtk_container_add(GTK_CONTAINER(pEventBox1), pRepPiece);
+    gtk_container_add(GTK_CONTAINER(pEventBox4), pRepPiece);
 
     pVBox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     gtk_container_add(GTK_CONTAINER(pRepPiece), pVBox2);
@@ -425,17 +454,19 @@ int main(int argc, char **argv)
 
 
     // Création des labels Affichage du repère fraiseuse
-    pEventBox2 = gtk_event_box_new();
-    gtk_box_pack_start(GTK_BOX(pVBox1), pEventBox2, TRUE, TRUE, 0);
-    gtk_widget_show(pEventBox2);
-    g_signal_connect(pEventBox2, "button-press-event", G_CALLBACK(CB_RepereFraiseuse), (void*)&global);
-    gtk_widget_realize(pEventBox2);
-    gdk_window_set_cursor(gtk_widget_get_window(pEventBox2), pHandCursor);
+    pEventBox5 = gtk_event_box_new();
+    gtk_box_pack_start(GTK_BOX(pVBox1), pEventBox5, TRUE, TRUE, 0);
+    gtk_widget_show(pEventBox5);
+    g_signal_connect(pEventBox5, "button-press-event", G_CALLBACK(CB_RepereFraiseuse), (void*)&global);
+    g_signal_connect(G_OBJECT(pEventBox5), "enter-notify-event", G_CALLBACK(CB_RepereFraiseuse_Affiche_Status), (void*)&global);
+    g_signal_connect(G_OBJECT(pEventBox5), "leave-notify-event", G_CALLBACK(CB_RepereFraiseuse_Efface_Status), (void*)&global);
+    gtk_widget_realize(pEventBox5);
+    gdk_window_set_cursor(gtk_widget_get_window(pEventBox5), pHandCursor);
 
     pRepFraiseuse = gtk_frame_new("Repere Fraiseuse");
     gtk_frame_set_label_align(GTK_FRAME(pRepFraiseuse), 0.5, 0.5);
     gtk_container_set_border_width(GTK_CONTAINER(pRepFraiseuse), 5);
-    gtk_container_add(GTK_CONTAINER(pEventBox2), pRepFraiseuse);
+    gtk_container_add(GTK_CONTAINER(pEventBox5), pRepFraiseuse);
 
     pVBox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     gtk_container_add(GTK_CONTAINER(pRepFraiseuse), pVBox2);
@@ -498,7 +529,7 @@ int main(int argc, char **argv)
     gtk_box_pack_start(GTK_BOX(pVBox), pScrolledWindow, TRUE, TRUE, 0);
 
     // Insertion dans la fenetre de la barre de status
-    gtk_box_pack_end(GTK_BOX(pVBox), pStatusBar, FALSE, FALSE, 0);
+    gtk_box_pack_end(GTK_BOX(pVBox), global.pStatusBar, FALSE, FALSE, 0);
 
 
 

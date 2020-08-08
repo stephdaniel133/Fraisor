@@ -411,16 +411,14 @@ void CB_Bouton_Xm_Click(GtkWidget* pWidget, global_t* pGlobal)
     Envoi_Deplacement('X', 0, pGlobal);
 }
 
-void CB_Bouton_X_Affiche_Status(GtkWidget* pWidget, gpointer pStatusBar)
+void CB_Bouton_X_Affiche_Status(GtkWidget* pWidget, global_t* pGlobal)
 {
-    // Ajout d'un message
-    gtk_statusbar_push(GTK_STATUSBAR(pStatusBar), 0, "Bouge l'axe X de la fraiseuse");
+    gtk_statusbar_push(GTK_STATUSBAR(pGlobal->pStatusBar), 0, "Deplacement suivant l'axe X de la fraiseuse");
 }
 
-void CB_Bouton_X_Efface_Status(GtkWidget* pWidget, gpointer pStatusBar)
+void CB_Bouton_X_Efface_Status(GtkWidget* pWidget, global_t* pGlobal)
 {
-    // Suppression d'un message
-    gtk_statusbar_pop(GTK_STATUSBAR(pStatusBar), 0);
+    gtk_statusbar_pop(GTK_STATUSBAR(pGlobal->pStatusBar), 0);
 }
 
 void CB_Bouton_Yp_Click(GtkWidget* pWidget, global_t* pGlobal)
@@ -433,16 +431,14 @@ void CB_Bouton_Ym_Click(GtkWidget* pWidget, global_t* pGlobal)
     Envoi_Deplacement('Y', 0, pGlobal);
 }
 
-void CB_Bouton_Y_Affiche_Status(GtkWidget* pWidget, gpointer pStatusBar)
+void CB_Bouton_Y_Affiche_Status(GtkWidget* pWidget, global_t* pGlobal)
 {
-    // Ajout d'un message
-    gtk_statusbar_push(GTK_STATUSBAR(pStatusBar), 0, "Bouge l'axe Y de la fraiseuse");
+    gtk_statusbar_push(GTK_STATUSBAR(pGlobal->pStatusBar), 0, "Deplacement suivant l'axe Y de la fraiseuse");
 }
 
-void CB_Bouton_Y_Efface_Status(GtkWidget* pWidget, gpointer pStatusBar)
+void CB_Bouton_Y_Efface_Status(GtkWidget* pWidget, global_t* pGlobal)
 {
-    // Suppression d'un message
-    gtk_statusbar_pop(GTK_STATUSBAR(pStatusBar), 0);
+    gtk_statusbar_pop(GTK_STATUSBAR(pGlobal->pStatusBar), 0);
 }
 
 void CB_Bouton_Zp_Click(GtkWidget* pWidget, global_t* pGlobal)
@@ -455,21 +451,49 @@ void CB_Bouton_Zm_Click(GtkWidget* pWidget, global_t* pGlobal)
     Envoi_Deplacement('Z', 0, pGlobal);
 }
 
-void CB_Bouton_Z_Affiche_Status(GtkWidget* pWidget, gpointer pStatusBar)
+void CB_Bouton_Z_Affiche_Status(GtkWidget* pWidget, global_t* pGlobal)
 {
-    // Ajout d'un message
-    gtk_statusbar_push(GTK_STATUSBAR(pStatusBar), 0, "Bouge l'axe Z de la fraiseuse");
+    gtk_statusbar_push(GTK_STATUSBAR(pGlobal->pStatusBar), 0, "Deplacement suivant l'axe Z de la fraiseuse");
 }
 
-void CB_Bouton_Z_Efface_Status(GtkWidget* pWidget, gpointer pStatusBar)
+void CB_Bouton_Z_Efface_Status(GtkWidget* pWidget, global_t* pGlobal)
 {
-    // Suppression d'un message
-    gtk_statusbar_pop(GTK_STATUSBAR(pStatusBar), 0);
+    gtk_statusbar_pop(GTK_STATUSBAR(pGlobal->pStatusBar), 0);
+}
+
+void CB_DistanceDeplacement_Affiche_Status(GtkWidget* pWidget, GdkEvent* event, global_t* pGlobal)
+{
+    gtk_statusbar_push(GTK_STATUSBAR(pGlobal->pStatusBar), 0, "Reglage de la distance de deplacement manuel de la fraiseuse");
+}
+
+void CB_DistanceDeplacement_Efface_Status(GtkWidget* pWidget, GdkEvent* event, global_t* pGlobal)
+{
+    gtk_statusbar_pop(GTK_STATUSBAR(pGlobal->pStatusBar), 0);
+}
+
+void CB_VitesseDeplacement_Affiche_Status(GtkWidget* pWidget, GdkEvent* event, global_t* pGlobal)
+{
+    gtk_statusbar_push(GTK_STATUSBAR(pGlobal->pStatusBar), 0, "Reglage de la vitesse de deplacement manuel de la fraiseuse");
+}
+
+void CB_VitesseDeplacement_Efface_Status(GtkWidget* pWidget, GdkEvent* event, global_t* pGlobal)
+{
+    gtk_statusbar_pop(GTK_STATUSBAR(pGlobal->pStatusBar), 0);
 }
 
 void ComboBoxVitProg_on_changed(GtkWidget* pWidget, global_t* pGlobal)
 {
     Envoi_VitesseProgramme(pGlobal);
+}
+
+void CB_VitesseProgramme_Affiche_Status(GtkWidget* pWidget, GdkEvent* event, global_t* pGlobal)
+{
+    gtk_statusbar_push(GTK_STATUSBAR(pGlobal->pStatusBar), 0, "Reglage de la vitesse d'execution du programme");
+}
+
+void CB_VitesseProgramme_Efface_Status(GtkWidget* pWidget, GdkEvent* event, global_t* pGlobal)
+{
+    gtk_statusbar_pop(GTK_STATUSBAR(pGlobal->pStatusBar), 0);
 }
 
 /*----------------------Callback des changements de repères piece de l'interface-----------------------*/
@@ -512,7 +536,6 @@ gint CB_Bouton_OK_ReperePiece(GtkButton* button, global_t* pGlobal)
 
     return EXIT_SUCCESS;
 }
-
 
 gint CB_Bouton_Annuler(GtkButton* button, gpointer p)
 {
@@ -620,6 +643,16 @@ void CB_ReperePiece(GtkWidget* pWidget, GdkEvent* event, global_t* pGlobal)
     gtk_widget_show_all(pWindow);
 }
 
+void CB_ReperePiece_Affiche_Status(GtkWidget* pWidget, GdkEvent* event, global_t* pGlobal)
+{
+    gtk_statusbar_push(GTK_STATUSBAR(pGlobal->pStatusBar), 0, "Reglage des origines programme");
+}
+
+void CB_ReperePiece_Efface_Status(GtkWidget* pWidget, GdkEvent* event, global_t* pGlobal)
+{
+    gtk_statusbar_pop(GTK_STATUSBAR(pGlobal->pStatusBar), 0);
+}
+
 /*----------------------Callback de réglage de repères fraiseuse de l'interface-----------------------*/
 gint CB_Bouton_OK_RepereFraiseuse(GtkButton* button, global_t* pGlobal)
 {
@@ -714,6 +747,15 @@ void CB_RepereFraiseuse(GtkWidget* pWidget, GdkEvent* event, global_t* pGlobal)
     gtk_widget_show_all(pWindow);
 }
 
+void CB_RepereFraiseuse_Affiche_Status(GtkWidget* pWidget, GdkEvent* event, global_t* pGlobal)
+{
+    gtk_statusbar_push(GTK_STATUSBAR(pGlobal->pStatusBar), 0, "Reglage des origines machine");
+}
+
+void CB_RepereFraiseuse_Efface_Status(GtkWidget* pWidget, GdkEvent* event, global_t* pGlobal)
+{
+    gtk_statusbar_pop(GTK_STATUSBAR(pGlobal->pStatusBar), 0);
+}
 
 /*----------------------Callback de la fenêtre de texte de l'interface-----------------------*/
 void CB_TextView_Modifie(GtkWidget* pWidget, global_t* pGlobal)
