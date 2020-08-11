@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdbool.h>
 #include <gtk/gtk.h>
 
 #include "main.h"
@@ -52,6 +53,7 @@ int main(int argc, char **argv)
     static GdkCursor* pHandCursor       = NULL;
     static GtkWidget* pEventBox5        = NULL;
     static GtkWidget* pRepFraiseuse     = NULL;
+    static GtkWidget* pEventBox6        = NULL;
 
     static GtkTextBuffer* pTextBuffer   = NULL;
     static GtkWidget* pScrolledWindow   = NULL;
@@ -211,12 +213,12 @@ int main(int argc, char **argv)
 
     pToolItem = gtk_tool_button_new(gtk_image_new_from_icon_name("document-save", GTK_ICON_SIZE_SMALL_TOOLBAR), "Nouveau");
     g_signal_connect(G_OBJECT(pToolItem), "clicked", G_CALLBACK(CB_Menu_Sauvegarder), (void*)&global);
-    gtk_widget_set_tooltip_text(GTK_WIDGET(pToolItem), "Sauvergarder le programme");
+    gtk_widget_set_tooltip_text(GTK_WIDGET(pToolItem), "Sauvegarder le programme");
     gtk_toolbar_insert(GTK_TOOLBAR(pToolBar), pToolItem, -1);
 
     pToolItem = gtk_tool_button_new(gtk_image_new_from_icon_name("document-save-as", GTK_ICON_SIZE_SMALL_TOOLBAR), "Nouveau");
     g_signal_connect(G_OBJECT(pToolItem), "clicked", G_CALLBACK(CB_Menu_SauvegarderSous), (void*)&global);
-    gtk_widget_set_tooltip_text(GTK_WIDGET(pToolItem), "Sauvergarder le programme sous un nouveau nom");
+    gtk_widget_set_tooltip_text(GTK_WIDGET(pToolItem), "Sauvegarder le programme sous un nouveau nom");
     gtk_toolbar_insert(GTK_TOOLBAR(pToolBar), pToolItem, -1);
 
     pToolItem = gtk_separator_tool_item_new();
@@ -512,14 +514,12 @@ int main(int argc, char **argv)
     global.pTextView = gtk_text_view_new();
     pTextBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(global.pTextView));
     gtk_text_buffer_set_text(pTextBuffer, "G0 X0 Y0 Z0", -1);
-    GtkCssProvider *provider;
-    GtkStyleContext *context;
-    provider = gtk_css_provider_new();
+    GtkCssProvider *providerTextView = gtk_css_provider_new();
     //https://developer.gnome.org/gtk3/stable/chap-css-properties.html Table 3
-    const gchar *textformat = "textview { font: 18px Liberation Mono; } text { color: black; }";
-    gtk_css_provider_load_from_data(provider, textformat, -1, NULL);
-    context = gtk_widget_get_style_context(global.pTextView);
-    gtk_style_context_add_provider(context, GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+    const gchar *textformatTextView = "textview { font: 18px Liberation Mono; } text { color: black; }";
+    gtk_css_provider_load_from_data(providerTextView, textformatTextView, -1, NULL);
+    GtkStyleContext *contextTextView = gtk_widget_get_style_context(global.pTextView);
+    gtk_style_context_add_provider(contextTextView, GTK_STYLE_PROVIDER(providerTextView), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
     // Insertion de la zone de text dans la fenetre
     pScrolledWindow = gtk_scrolled_window_new(NULL, NULL);
@@ -527,6 +527,27 @@ int main(int argc, char **argv)
     gtk_container_set_border_width(GTK_CONTAINER(global.pTextView), 5);
     gtk_container_add(GTK_CONTAINER(pScrolledWindow), global.pTextView);
     gtk_box_pack_start(GTK_BOX(pVBox), pScrolledWindow, TRUE, TRUE, 0);
+
+
+    //Insertion de la ProgressBar dans le bas de la fenêtre
+    pEventBox6 = gtk_event_box_new();
+    gtk_box_pack_start(GTK_BOX(pVBox), pEventBox6, FALSE, TRUE, 0);
+    gtk_widget_show(pEventBox6);
+    g_signal_connect(G_OBJECT(pEventBox6), "enter-notify-event", G_CALLBACK(CB_ProgressBar_Affiche_Status), (void*)&global);
+    g_signal_connect(G_OBJECT(pEventBox6), "leave-notify-event", G_CALLBACK(CB_ProgressBar_Efface_Status), (void*)&global);
+
+    global.pProgressBar = gtk_progress_bar_new();
+    //gtk_box_pack_start(GTK_BOX(pVBox), global.pProgressBar, FALSE, TRUE, 0);
+    gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(global.pProgressBar), 0.0);
+    gtk_progress_bar_set_show_text(GTK_PROGRESS_BAR(global.pProgressBar), true);
+    GtkCssProvider *providerProgressBar = gtk_css_provider_new();
+    //https://developer.gnome.org/gtk3/stable/chap-css-properties.html Table 3
+    const gchar *textformatProgressBar = "progressbar text { font: 18px Liberation Mono; color: black; } progress { min-height: 8px; }"; //background-color: green;
+    gtk_css_provider_load_from_data(providerProgressBar, textformatProgressBar, -1, NULL);
+    GtkStyleContext *contextProgressBar = gtk_widget_get_style_context(global.pProgressBar);
+    gtk_style_context_add_provider(contextProgressBar, GTK_STYLE_PROVIDER(providerProgressBar), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+    gtk_container_add(GTK_CONTAINER(pEventBox6), global.pProgressBar);
+
 
     // Insertion dans la fenetre de la barre de status
     gtk_box_pack_end(GTK_BOX(pVBox), global.pStatusBar, FALSE, FALSE, 0);

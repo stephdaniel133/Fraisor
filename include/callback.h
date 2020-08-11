@@ -60,5 +60,7 @@ void CB_RepereFraiseuse_Efface_Status(GtkWidget* pWidget, GdkEvent* event, globa
 
 void CB_TextView_Modifie(GtkWidget* widget, global_t* pGlobal);
 
+void CB_ProgressBar_Affiche_Status(GtkWidget* pWidget, GdkEvent* event, global_t* pGlobal);
+void CB_ProgressBar_Efface_Status(GtkWidget* pWidget, GdkEvent* event, global_t* pGlobal);
 
 #endif  //__CALLBACK_H

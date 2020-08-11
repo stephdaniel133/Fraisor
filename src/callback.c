@@ -360,7 +360,7 @@ void CB_Lecture(GtkWidget* pWidget, global_t* pGlobal)
     printf("Clique sur Lecture\n");
 
     pGlobal->Etat = LECTURE;
-    pGlobal->nombre_ligne = 0;
+    pGlobal->nombre_lignes = 0;
 
     if((pGlobal->Thread1 = g_thread_try_new("Thread_LectureStop", (GThreadFunc)Thread_LectureStop, (global_t *)pGlobal, &err)) == NULL)
     {
@@ -761,4 +761,15 @@ void CB_RepereFraiseuse_Efface_Status(GtkWidget* pWidget, GdkEvent* event, globa
 void CB_TextView_Modifie(GtkWidget* pWidget, global_t* pGlobal)
 {
     pGlobal->sauve = FALSE;
+}
+
+/*----------------------Callback de la Progess Bar de l'interface-----------------------*/
+void CB_ProgressBar_Affiche_Status(GtkWidget* pWidget, GdkEvent* event, global_t* pGlobal)
+{
+    gtk_statusbar_push(GTK_STATUSBAR(pGlobal->pStatusBar), 0, "Avancement du programme en cours");
+}
+
+void CB_ProgressBar_Efface_Status(GtkWidget* pWidget, GdkEvent* event, global_t* pGlobal)
+{
+    gtk_statusbar_pop(GTK_STATUSBAR(pGlobal->pStatusBar), 0);
 }

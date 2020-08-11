@@ -27,6 +27,11 @@ void Thread_LectureStop(global_t* pGlobal)
     enum EtatProgramme Etat;
 
 
+    g_mutex_lock(pGlobal->Mutex_UpdateLabel);
+    pGlobal->nombre_lignes = 0;
+    pGlobal->nombre_lignes_OK = 0;
+    g_mutex_unlock(pGlobal->Mutex_UpdateLabel);
+
     while(pGlobal->quit == 0)
     {
         g_mutex_lock(pGlobal->Mutex_LectureStop);
@@ -41,16 +46,13 @@ void Thread_LectureStop(global_t* pGlobal)
                 CTS_Enable = RS232_IsCTSEnabled(pGlobal->comport_number);
                 if((pGlobal->comport_open == 0) && (CTS_Enable == 1))
                 {
-                    if(pGlobal->nombre_ligne == 0)   //Détermine une seule fois le nombre de lignes du TextView
+                    if(pGlobal->nombre_lignes == 0)   //Détermine une seule fois le nombre de lignes du TextView
                     {
                         gtk_text_view_set_editable(GTK_TEXT_VIEW(pGlobal->pTextView), FALSE);
                         buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(pGlobal->pTextView));
-                        pGlobal->nombre_ligne = gtk_text_buffer_get_line_count(buffer);
+                        pGlobal->nombre_lignes = gtk_text_buffer_get_line_count(buffer);
                         gtk_text_buffer_get_bounds(buffer, &start, &iter);
                         i = 0;
-                        g_mutex_lock(pGlobal->Mutex_UpdateLabel);
-                        pGlobal->LigneProg = 0;
-                        g_mutex_unlock(pGlobal->Mutex_UpdateLabel);
                     }
 
                     g_mutex_lock(pGlobal->Mutex_UpdateLabel);
@@ -89,7 +91,9 @@ void Thread_LectureStop(global_t* pGlobal)
                 }
                 else    //if(pGlobal->comport_open == 1)
                 {
+                    g_mutex_lock(pGlobal->Mutex_LectureStop);
                     pGlobal->Etat = STOP;
+                    g_mutex_unlock(pGlobal->Mutex_LectureStop);
                     printf("Port COM non ouvert !\n");
                     return;
                 }
@@ -116,18 +120,18 @@ void UpdateLabels(global_t* pGlobal)
     static uint8_t status = 0;
     uint8_t Fraiseuse_status;
     GtkTextBuffer *buffer = NULL;
-    //uint32_t LigneProg = 0;
-    //uint32_t OldLigneProg = 0;
     GtkTextIter startExec;
     GtkTextIter endExec;
+    float fracProg = 0;
+    uint32_t LigneProg = 0;
 
 
     buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(pGlobal->pTextView));
 
-    if(gtk_text_tag_table_lookup(gtk_text_buffer_get_tag_table(buffer), "highlight") == NULL)
-    {
-        gtk_text_buffer_create_tag(buffer, "highlight", "weight", PANGO_WEIGHT_BOLD, "foreground", "blue", NULL);
-    }
+//    if(gtk_text_tag_table_lookup(gtk_text_buffer_get_tag_table(buffer), "highlight") == NULL)
+//    {
+//        gtk_text_buffer_create_tag(buffer, "highlight", "weight", PANGO_WEIGHT_BOLD, "foreground", "blue", NULL);
+//    }
 
     while(pGlobal->quit == 0)
     {
@@ -201,31 +205,7 @@ void UpdateLabels(global_t* pGlobal)
 
         status = pGlobal->status;
 
-
-
-            //Surlignage de la ligne en cours d'execution
-//        if(pGlobal->Etat == LECTURE)
-//        {
-//            LigneProg = pGlobal->LigneProg;
-//
-//            if(LigneProg != OldLigneProg)
-//            {
-//                gtk_text_buffer_get_iter_at_line(buffer, &startExec, OldLigneProg);
-//                gtk_text_buffer_get_iter_at_line(buffer, &endExec, LigneProg + 1);
-//
-//                OldLigneProg = LigneProg;
-//                //buffer_ligne = gtk_text_buffer_get_text(buffer, &startExec, &endExec, FALSE);
-//                //printf(".....Application du Tag2 sur ligne %u :%s\n", LigneProg, buffer_ligne);
-//
-//                //gtk_text_buffer_apply_tag_by_name(buffer, "highlight", &startExec, &endExec);
-//
-//                if((LigneProg % 8) == 0)
-//                {
-//                    //gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW(pGlobal->pTextView), &endExec, 0, TRUE, 0, 0.3);
-//                }
-//            }
-//        }
-        /*else*/ if(Fraiseuse_status == FRAISEUSE_EN_DEPLACEMENT)
+        if(Fraiseuse_status == FRAISEUSE_EN_DEPLACEMENT)
         {
             gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemLecture), FALSE);
             gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemStop), TRUE);
@@ -239,7 +219,22 @@ void UpdateLabels(global_t* pGlobal)
             gtk_text_buffer_get_bounds(buffer, &startExec, &endExec);
             gtk_text_buffer_remove_all_tags(buffer, &startExec, &endExec);
             gtk_text_view_set_editable(GTK_TEXT_VIEW(pGlobal->pTextView), TRUE);
-            //OldLigneProg = 1;
+        }
+
+
+        if(LigneProg != pGlobal->nombre_lignes_OK)
+        {
+            if(pGlobal->nombre_lignes == 0)
+            {
+                fracProg = 0.0;
+            }
+            else
+            {
+                fracProg = (float)pGlobal->nombre_lignes_OK / (float)pGlobal->nombre_lignes;
+            }
+
+            gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(pGlobal->pProgressBar), fracProg);
+            LigneProg = pGlobal->nombre_lignes_OK;
         }
 
 
@@ -260,6 +255,7 @@ void Thread_Reception(global_t* pGlobal)
     uint16_t taille = 0;
     char temp[10];
     uint32_t LigneProg = 0;
+
 
     gdk_threads_add_idle((GSourceFunc)UpdateLabels, pGlobal);
 
@@ -303,8 +299,8 @@ void Thread_Reception(global_t* pGlobal)
                 if((temp[0] == 'O') && (temp[1]=='K'))
                 {
                     g_mutex_lock(pGlobal->Mutex_UpdateLabel);
-                    pGlobal->LigneProg++;
-                    LigneProg = pGlobal->LigneProg;
+                    pGlobal->nombre_lignes_OK++;
+                    LigneProg = pGlobal->nombre_lignes_OK;
                     g_mutex_unlock(pGlobal->Mutex_UpdateLabel);
                     printf("Ligne Executee : %u, instruction : %u, %u\n", LigneProg, temp[2], temp[3]);
                 }

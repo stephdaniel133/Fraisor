@@ -31,6 +31,7 @@ typedef struct
     GtkWidget *pMainWindow;
     GtkWidget *pStatusBar;
     GtkWidget *pTextView;
+    GtkWidget *pProgressBar;
     gchar     *chemin;
     gboolean  sauve;
     //Repere Piece et Fraiseuse
@@ -83,8 +84,8 @@ typedef struct
     float Zpiece;
     uint8_t status;
     char buffer[20];
-    uint32_t nombre_ligne;
-    uint32_t LigneProg;
+    uint32_t nombre_lignes;
+    uint32_t nombre_lignes_OK;
 } global_t;
 
 
