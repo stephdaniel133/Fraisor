@@ -563,9 +563,6 @@ int main(int argc, char **argv)
     global.Mutex_UpdateLabel = g_new(GMutex, 1);
     g_mutex_init(global.Mutex_UpdateLabel);
 
-    //Lancement des différents threads
-    Lance_Thread(&global);
-
 
 
     // Affichage et boucle évènementielle
@@ -573,14 +570,7 @@ int main(int argc, char **argv)
     gtk_main();
     printf("gtk_main ...  fin\n");
 
-    //g_thread_join(global.Thread1);
-    //g_thread_join(global.Thread2);
-
     pango_attr_list_unref(attrlist);
-
-    //On attend la fin de toutes les tâches
-    g_usleep(100*1000);
-
 
     return EXIT_SUCCESS;
 }

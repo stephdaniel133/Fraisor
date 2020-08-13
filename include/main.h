@@ -54,10 +54,9 @@ typedef struct
     int         comport_number;
     gboolean    comport_open;
     //Gestion des Threads
-    GThread     *Thread1;
-    GThread     *Thread2;
-    GThread     *Thread3;
-    //GThread     *Thread4;
+    GThread     *pThreadLectureStop;
+    GThread     *pThreadReception;
+
     enum        EtatProgramme Etat;
     GMutex      *Mutex_LectureStop;
     GMutex      *Mutex_EnvoiPortSerie;

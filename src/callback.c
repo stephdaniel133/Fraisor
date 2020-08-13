@@ -304,6 +304,14 @@ void CB_Connecter(GtkWidget* pWidget, global_t* pGlobal)
                 gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemDeconnecter), TRUE);
                 gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemConnecter), FALSE);
                 printf("--- Connexion etablie ---\n");
+
+                //On lance la tache de reception
+                GError *err = NULL;
+                if((pGlobal->pThreadReception = g_thread_try_new("Thread Reception", (GThreadFunc)Thread_Reception, (global_t *)pGlobal, &err)) == NULL)
+                {
+                    g_error("Thread Reception create failed: %s!!\n", err->message );
+                    g_error_free(err);
+                }
             }
             else
             {
@@ -322,8 +330,11 @@ void CB_Deconnecter(GtkWidget* pWidget, global_t* pGlobal)
 {
     if(0 == pGlobal->comport_open)
     {
+        g_mutex_lock(pGlobal->Mutex_LectureStop);
+        pGlobal->Etat = STOP;
+        g_mutex_unlock(pGlobal->Mutex_LectureStop);
         Envoi_Reset_Fraiseuse(pGlobal);
-        g_usleep(100*1000); //On laisse le temps au dsPIC de traiter la ligne pendant 20ms
+        g_usleep(100*1000); //On laisse le temps au dsPIC de traiter la ligne pendant 100ms
         RS232_CloseComport(pGlobal->comport_number);
         pGlobal->comport_open = 1;
         gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemDeconnecter), FALSE);
@@ -334,35 +345,9 @@ void CB_Deconnecter(GtkWidget* pWidget, global_t* pGlobal)
 void CB_Lecture(GtkWidget* pWidget, global_t* pGlobal)
 {
     GError *err = NULL;
-    GtkTextBuffer* buffer = NULL;
-    GtkTextIter start;
-    GtkTextIter end;
-    gchar* buffer_ligne = NULL;
-    char ajout = 0x0A;  //Caractere saut de ligne
-    int nombre_ligne = gtk_text_buffer_get_line_count(gtk_text_view_get_buffer(GTK_TEXT_VIEW(pGlobal->pTextView)));
 
 
-    gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemLecture), FALSE);
-    gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemStop), TRUE);
-    gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemPause), TRUE);
-
-    //Ajout d'un saut de ligne à la fin du TextView s'il n'y en a pas
-    buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(pGlobal->pTextView));
-    gtk_text_buffer_get_bounds(buffer, &start, &end);
-    gtk_text_buffer_get_iter_at_line(buffer, &start, nombre_ligne-1);
-    buffer_ligne = gtk_text_buffer_get_text(buffer, &start, &end, FALSE);
-
-    if(strcmp(buffer_ligne, "") != 0)
-    {
-        gtk_text_buffer_insert(buffer, &end, &ajout, 1);
-    }
-
-    printf("Clique sur Lecture\n");
-
-    pGlobal->Etat = LECTURE;
-    pGlobal->nombre_lignes = 0;
-
-    if((pGlobal->Thread1 = g_thread_try_new("Thread_LectureStop", (GThreadFunc)Thread_LectureStop, (global_t *)pGlobal, &err)) == NULL)
+    if((pGlobal->pThreadLectureStop = g_thread_try_new("Thread_LectureStop", (GThreadFunc)Thread_LectureStop, (global_t *)pGlobal, &err)) == NULL)
     {
         g_error("Thread LectureStop create failed: %s!!\n", err->message );
         g_error_free(err);
@@ -371,8 +356,6 @@ void CB_Lecture(GtkWidget* pWidget, global_t* pGlobal)
 
 void CB_Stop(GtkWidget* pWidget, global_t* pGlobal)
 {
-    gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemLecture), TRUE);
-
     Envoi_Arret_Programme(pGlobal);
 
     g_mutex_lock(pGlobal->Mutex_LectureStop);

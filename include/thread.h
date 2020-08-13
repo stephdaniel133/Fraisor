@@ -1,15 +1,6 @@
 #ifndef __THREAD_H
 #define __THREAD_H
 
-/*union var_type             //Utilisé pour découper un float ou un int32 plus facilement
-{
-    float u_f;
-    int u_i;
-    char u_o[4];
-};
-*/
-
-
 struct buffer_position
 {
     char axe1;
@@ -24,8 +15,8 @@ struct buffer_position
 };
 
 
-void Thread_LectureStop(global_t* pGlobal);
-void Thread_Scroll(global_t* pGlobal);
-void Lance_Thread(volatile global_t *pGlobal);
+gboolean Thread_LectureStop(gpointer data);
+gboolean Thread_Reception(gpointer data);
+gboolean Thread_UpdateLabels(gpointer data);
 
 #endif //__THREAD_H
