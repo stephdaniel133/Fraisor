@@ -289,7 +289,7 @@ unsigned char Lit_Octet(global_t* pGlobal)
     {
         while(RS232_PollComport(pGlobal->comport_number, &temp, 1) <= 0)
         {
-            g_usleep(1*1000);
+            g_usleep(100*1000); //valeur de tempo venant de la doc du site http://www.teuniz.net/RS-232/
         }
 
         ret = temp;
