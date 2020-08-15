@@ -55,7 +55,6 @@ int main(int argc, char **argv)
     static GtkWidget* pRepFraiseuse     = NULL;
     static GtkWidget* pEventBox6        = NULL;
 
-    static GtkTextBuffer* pTextBuffer   = NULL;
     static GtkWidget* pScrolledWindow   = NULL;
 
     gchar* sUtf8             = NULL;
@@ -512,14 +511,15 @@ int main(int argc, char **argv)
 
     // Creation de la zone de texte
     global.pTextView = gtk_text_view_new();
-    pTextBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(global.pTextView));
-    gtk_text_buffer_set_text(pTextBuffer, "G0 X0 Y0 Z0", -1);
+    global.pTextBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(global.pTextView));
+    gtk_text_buffer_set_text(global.pTextBuffer, "G0 X0 Y0 Z0", -1);
     GtkCssProvider *providerTextView = gtk_css_provider_new();
     //https://developer.gnome.org/gtk3/stable/chap-css-properties.html Table 3
     const gchar *textformatTextView = "textview { font: 18px Liberation Mono; } text { color: black; }";
     gtk_css_provider_load_from_data(providerTextView, textformatTextView, -1, NULL);
     GtkStyleContext *contextTextView = gtk_widget_get_style_context(global.pTextView);
     gtk_style_context_add_provider(contextTextView, GTK_STYLE_PROVIDER(providerTextView), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+    gtk_text_buffer_create_tag(global.pTextBuffer, "highlight", "weight", PANGO_WEIGHT_BOLD, "foreground", "blue", NULL);
 
     // Insertion de la zone de text dans la fenetre
     pScrolledWindow = gtk_scrolled_window_new(NULL, NULL);

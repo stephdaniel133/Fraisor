@@ -386,11 +386,13 @@ void CB_Pause(GtkWidget* pWidget, global_t* pGlobal)
 //----------------------Callback des boutons de l'interface-----------------------//
 void CB_Bouton_Xp_Click(GtkWidget* pWidget, global_t* pGlobal)
 {
+    pGlobal->nombre_lignes_OK = -2;
     Envoi_Deplacement('X', 1, pGlobal);
 }
 
 void CB_Bouton_Xm_Click(GtkWidget* pWidget, global_t* pGlobal)
 {
+    pGlobal->nombre_lignes_OK = -2;
     Envoi_Deplacement('X', 0, pGlobal);
 }
 
@@ -406,11 +408,13 @@ void CB_Bouton_X_Efface_Status(GtkWidget* pWidget, global_t* pGlobal)
 
 void CB_Bouton_Yp_Click(GtkWidget* pWidget, global_t* pGlobal)
 {
+    pGlobal->nombre_lignes_OK = -2;
     Envoi_Deplacement('Y', 1, pGlobal);
 }
 
 void CB_Bouton_Ym_Click(GtkWidget* pWidget, global_t* pGlobal)
 {
+    pGlobal->nombre_lignes_OK = -2;
     Envoi_Deplacement('Y', 0, pGlobal);
 }
 
@@ -426,11 +430,13 @@ void CB_Bouton_Y_Efface_Status(GtkWidget* pWidget, global_t* pGlobal)
 
 void CB_Bouton_Zp_Click(GtkWidget* pWidget, global_t* pGlobal)
 {
+    pGlobal->nombre_lignes_OK = -2;
     Envoi_Deplacement('Z', 1, pGlobal);
 }
 
 void CB_Bouton_Zm_Click(GtkWidget* pWidget, global_t* pGlobal)
 {
+    pGlobal->nombre_lignes_OK = -2;
     Envoi_Deplacement('Z', 0, pGlobal);
 }
 

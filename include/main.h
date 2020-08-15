@@ -20,17 +20,13 @@ enum EtatProgramme
     PAUSE
 };
 
-enum EtatFraiseuse
-{
-    FRAISEUSE_STOP,
-    FRAISEUSE_EN_DEPLACEMENT
-};
 
 typedef struct
 {
     GtkWidget *pMainWindow;
     GtkWidget *pStatusBar;
     GtkWidget *pTextView;
+    GtkTextBuffer *pTextBuffer;
     GtkWidget *pProgressBar;
     gchar     *chemin;
     gboolean  sauve;
@@ -71,7 +67,7 @@ typedef struct
     GtkWidget *pCheckEntryZ;
 
 
-    GMutex      *Mutex_UpdateLabel;
+    GMutex    *Mutex_UpdateLabel;
     char axe1;
     uint32_t Xfraiseuse;
     float Xpiece;
@@ -83,8 +79,8 @@ typedef struct
     float Zpiece;
     uint8_t status;
     char buffer[20];
-    uint32_t nombre_lignes;
-    uint32_t nombre_lignes_OK;
+    int32_t nombre_lignes;
+    int32_t nombre_lignes_OK;
 } global_t;
 
 
