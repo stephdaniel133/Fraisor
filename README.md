@@ -1,6 +1,8 @@
 # **Fraisor**
 Logiciel PC pour piloter et envoyer les programmes G-Code à une fraiseuse **EMCO F1 CNC**
+
 ![](https://github.com/stephdaniel133/Fraisor/blob/master/logo.png)
+![](https://github.com/stephdaniel133/Fraisor/blob/master/interface.png)
 ***
 ## **Installation et Compilation:**
 * _**Pour Linux**:_
