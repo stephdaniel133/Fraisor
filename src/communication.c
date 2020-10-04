@@ -246,18 +246,15 @@ int Attente_Connexion(global_t* pGlobal)
     unsigned char caractere = 'U';
     int ret = 0;
 
-    memset(buf, 0, sizeof(buf));
-
     RS232_flushRX(pGlobal->comport_number);
+
+    memset(buf, 0, sizeof(buf));
 
     g_mutex_lock(pGlobal->Mutex_EnvoiPortSerie);
     RS232_SendBuf(pGlobal->comport_number, &caractere, 1);
     g_mutex_unlock(pGlobal->Mutex_EnvoiPortSerie);
 
-    g_usleep(100*1000);
-    RS232_flushRX(pGlobal->comport_number);
-
-    g_usleep(100*1000);
+    g_usleep(300*1000);
     RS232_PollComport(pGlobal->comport_number, buf, 2000/*sizeof(buffer_comp)+6*/);
 
     printf("string recue : %s\n", buf);
