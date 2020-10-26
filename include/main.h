@@ -10,7 +10,10 @@
 
 #define GTK_THEME_FILE "temprc.txt"
 
-#define RESOLUTION_FRAISEUSE (float)1.0/72.0
+#define RESOLUTION_FRAISEUSE    (float)1.0/72.0
+#define BUTEE_MAX_X             (int32_t)14320
+#define BUTEE_MAX_Y             (int32_t)7160
+#define BUTEE_MAX_Z             (int32_t)14320
 
 
 enum EtatProgramme
@@ -68,16 +71,14 @@ typedef struct
 
 
     GMutex    *Mutex_UpdateLabel;
-    char axe1;
     uint32_t Xfraiseuse;
     float Xpiece;
-    char axe2;
     uint32_t Yfraiseuse;
     float Ypiece;
-    char axe3;
     uint32_t Zfraiseuse;
     float Zpiece;
     uint8_t status;
+    char ThreadReceptionStatut;
     char buffer[20];
     int32_t nombre_lignes;
     int32_t nombre_lignes_OK;

@@ -66,6 +66,7 @@ int main(int argc, char **argv)
     global.comport_open = 1;
     global.comport_number = -1; //Port COM non valide pour forcer la selection avant la connexion
     global.Etat         = STOP;
+    global.ThreadReceptionStatut = 0;
 
 
 
@@ -531,7 +532,7 @@ int main(int argc, char **argv)
 
     //Insertion de la ProgressBar dans le bas de la fenêtre
     pEventBox6 = gtk_event_box_new();
-    gtk_box_pack_start(GTK_BOX(pVBox), pEventBox6, FALSE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(pVBox), pEventBox6, FALSE, FALSE, 0);
     gtk_widget_show(pEventBox6);
     g_signal_connect(G_OBJECT(pEventBox6), "enter-notify-event", G_CALLBACK(CB_ProgressBar_Affiche_Status), (void*)&global);
     g_signal_connect(G_OBJECT(pEventBox6), "leave-notify-event", G_CALLBACK(CB_ProgressBar_Efface_Status), (void*)&global);
@@ -542,11 +543,19 @@ int main(int argc, char **argv)
     gtk_progress_bar_set_show_text(GTK_PROGRESS_BAR(global.pProgressBar), true);
     GtkCssProvider *providerProgressBar = gtk_css_provider_new();
     //https://developer.gnome.org/gtk3/stable/chap-css-properties.html Table 3
-    const gchar *textformatProgressBar = "progressbar text { font: 18px Liberation Mono; color: black; } progress { min-height: 8px; }"; //background-color: green;
+    const gchar *textformatProgressBar = "progressbar text { font: 18px Liberation Mono; color: black; } progress { min-height: 0px; padding: 0px; background-color: rgba(83, 165, 198, 255);}";
     gtk_css_provider_load_from_data(providerProgressBar, textformatProgressBar, -1, NULL);
     GtkStyleContext *contextProgressBar = gtk_widget_get_style_context(global.pProgressBar);
     gtk_style_context_add_provider(contextProgressBar, GTK_STYLE_PROVIDER(providerProgressBar), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-    gtk_container_add(GTK_CONTAINER(pEventBox6), global.pProgressBar);
+    //gtk_container_add(GTK_CONTAINER(pEventBox6), global.pProgressBar);
+
+    GtkWidget* pHbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    //gtk_box_pack_start(GTK_BOX(pVBox), pHbox2, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(pHbox2), global.pProgressBar, TRUE, TRUE, 1);
+    gtk_container_add(GTK_CONTAINER(pEventBox6), pHbox2);
+    //gtk_container_add(GTK_CONTAINER(pEventBox6), global.pProgressBar);
+
+
 
 
     // Insertion dans la fenetre de la barre de status

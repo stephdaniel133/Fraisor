@@ -11,27 +11,6 @@
 #include "communication.h"
 
 
-//----------------------Callback du menu de l'interface-----------------------//
-/*gboolean CB_Menu_Nouveau_Status(GtkWidget * widget, GdkEventCrossing * event, gpointer user_data)
-{
-    gchar* sUtf8;
-
-    // La souris rentre sur le widget
-    if (event->type == GDK_ENTER_NOTIFY)
-    {
-        gtk_menu_item_select(GTK_MENU_ITEM(widget));
-        sUtf8 = g_locale_to_utf8("Créer un nouveau fichier programme", -1, NULL, NULL, NULL);
-        gtk_statusbar_push (GTK_STATUSBAR (pStatusBar), GPOINTER_TO_INT(user_data), sUtf8);
-    }
-    // La souris sort du widget
-    else if (event->type == GDK_LEAVE_NOTIFY)
-    {
-        gtk_menu_item_deselect(GTK_MENU_ITEM(widget));
-        gtk_statusbar_pop(GTK_STATUSBAR(pStatusBar), GPOINTER_TO_INT(user_data));
-    }
-    return TRUE;
-}*/
-
 void CB_Menu_Nouveau(GtkWidget* pWidget, global_t* pGlobal)
 {
     GtkWidget* p_dialog = NULL;
@@ -285,28 +264,26 @@ void CB_APropos(GtkWidget* pWidget, global_t* pGlobal)
 void CB_Connecter(GtkWidget* pWidget, global_t* pGlobal)
 {
     char mode[]={'8', 'N', '1', 0};
+    unsigned char buf[2000];
 
     if(pGlobal->comport_number != -1)
     {
         printf("\nClique sur Connecter, connexion sur %s\n", RS232_GetPortName(pGlobal->comport_number));
 
         if(RS232_OpenComport(pGlobal->comport_number, 115200, mode, 0))
-        {
+        {   //Echec de l'ouverture du port serie
             pGlobal->comport_open = 1;
             print_info(pGlobal, "%s %s", "\nImpossible d'ouvrir le port serie", RS232_GetPortName(pGlobal->comport_number));
             return;
         }
         else
-        {                   //On a réussi à ouvrir le port, on essaye de se connecter à la fraiseuse
-            if(Attente_Connexion(pGlobal) == 1)
-            {
-                pGlobal->comport_open = 0;
-                gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemDeconnecter), TRUE);
-                gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemConnecter), FALSE);
-                printf("--- Connexion etablie ---\n");
+        {
+            pGlobal->comport_open = 0;
 
-                //On lance la tache de reception
-                GError *err = NULL;
+            //On lance la tache de reception pour voir si le PIC est déjà en cours d'execution
+            GError *err = NULL;
+            if(pGlobal->pThreadReception == NULL)
+            {
                 if((pGlobal->pThreadReception = g_thread_try_new("Thread Reception", (GThreadFunc)Thread_Reception, (global_t *)pGlobal, &err)) == NULL)
                 {
                     g_error("Thread Reception create failed: %s!!\n", err->message );
@@ -315,6 +292,27 @@ void CB_Connecter(GtkWidget* pWidget, global_t* pGlobal)
             }
             else
             {
+                printf("Probleme de creation dans la tache Reception, pointeur non nul\n");
+            }
+
+            g_usleep(400*1000); //On attend de recevoir des données du PIC
+
+            g_mutex_lock(pGlobal->Mutex_UpdateLabel);
+            buf[0] = pGlobal->ThreadReceptionStatut;
+            g_mutex_unlock(pGlobal->Mutex_UpdateLabel);
+
+            //on essaye de se connecter à la fraiseuse
+            if(buf[0] == 1)
+            {
+                gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemDeconnecter), TRUE);
+                gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemConnecter), FALSE);
+                printf("--- Connexion etablie ---\n");
+            }
+            else
+            {
+                pGlobal->comport_open = 1;
+                g_thread_join(pGlobal->pThreadReception);
+                pGlobal->pThreadReception = NULL;
                 RS232_CloseComport(pGlobal->comport_number);
                 printf("--- Connexion non etablie ! ---\n");
             }
@@ -333,10 +331,11 @@ void CB_Deconnecter(GtkWidget* pWidget, global_t* pGlobal)
         g_mutex_lock(pGlobal->Mutex_LectureStop);
         pGlobal->Etat = STOP;
         g_mutex_unlock(pGlobal->Mutex_LectureStop);
-        Envoi_Reset_Fraiseuse(pGlobal);
-        g_usleep(100*1000); //On laisse le temps au dsPIC de traiter la ligne pendant 100ms
-        RS232_CloseComport(pGlobal->comport_number);
+        //Envoi_Reset_Fraiseuse(pGlobal);
         pGlobal->comport_open = 1;
+        g_thread_join(pGlobal->pThreadReception);
+        pGlobal->pThreadReception = NULL;
+        RS232_CloseComport(pGlobal->comport_number);
         gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemDeconnecter), FALSE);
         gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemConnecter), TRUE);
     }
@@ -365,8 +364,6 @@ void CB_Stop(GtkWidget* pWidget, global_t* pGlobal)
 
 void CB_Pause(GtkWidget* pWidget, global_t* pGlobal)
 {
-    //gtk_widget_set_sensitive(GTK_WIDGET(pGlobal->pToolItemLecture), TRUE);
-
     Envoi_Pause_Programme(pGlobal);
 
     g_mutex_lock(pGlobal->Mutex_LectureStop);

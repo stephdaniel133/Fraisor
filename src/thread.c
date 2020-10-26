@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <gtk/gtk.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "main.h"
 #include "communication.h"
@@ -269,12 +270,20 @@ gpointer Thread_Reception(gpointer data)
 {
     global_t* pGlobal = data;
     uint16_t taille = 0;
-    char temp[10];
+    char temp[1000];
     int32_t LigneProg = 0;
+    char tempch;
+    int32_t tempint;
+    float tempfl;
+    int32_t i =0;
 
 
     printf("Debut de tache Reception\n");
 
+    RS232_flushRXTX(pGlobal->comport_number);   //Je vide le buffer
+    Lit_Octet(pGlobal); //On attends qu'on ait au moins un caractere dans le buffer
+    g_usleep(10*1000); // On attend au moins le temps de recevoir une trame position complète (240 octets à 115200bd = 3ms max)
+    RS232_flushRXTX(pGlobal->comport_number);   //Je revide le buffer pour être sûr qu'il soit vide
 
     while((pGlobal->quit == 0) && (pGlobal->comport_open == 0))
     {
@@ -286,20 +295,53 @@ gpointer Thread_Reception(gpointer data)
         else if(taille == 0x1D) //On a reçu une trame indiquant les coordonnées de la fraiseuse
         {
             g_mutex_lock(pGlobal->Mutex_UpdateLabel);
-            pGlobal->axe1 = Lit_Octet(pGlobal);
-            pGlobal->Xfraiseuse = Lit_Int32(pGlobal);
-            pGlobal->Xpiece = Lit_Float(pGlobal);
-            pGlobal->axe2 = Lit_Octet(pGlobal);
-            pGlobal->Yfraiseuse = Lit_Int32(pGlobal);
-            pGlobal->Ypiece = Lit_Float(pGlobal);
-            pGlobal->axe3 = Lit_Octet(pGlobal);
-            pGlobal->Zfraiseuse = Lit_Int32(pGlobal);
-            pGlobal->Zpiece = Lit_Float(pGlobal);
-            pGlobal->status = Lit_Octet(pGlobal);
-            g_mutex_unlock(pGlobal->Mutex_UpdateLabel);
 
-            //On met à jour l'interface
-            gdk_threads_add_idle((GSourceFunc)Thread_UpdateLabels, pGlobal);
+            tempch = Lit_Octet(pGlobal);
+            tempint = Lit_Int32(pGlobal);
+            tempfl = Lit_Float(pGlobal);
+            if(('X' == tempch) && (0 <= tempint) && (tempint <= BUTEE_MAX_X))
+            {
+                pGlobal->Xfraiseuse = tempint;
+                pGlobal->Xpiece = tempfl;
+
+                tempch = Lit_Octet(pGlobal);
+                tempint = Lit_Int32(pGlobal);
+                tempfl = Lit_Float(pGlobal);
+                if(('Y' == tempch) && (0 <= tempint) && (tempint <= BUTEE_MAX_Y))
+                {
+                    pGlobal->Yfraiseuse = tempint;
+                    pGlobal->Ypiece = tempfl;
+
+                    tempch = Lit_Octet(pGlobal);
+                    tempint = Lit_Int32(pGlobal);
+                    tempfl = Lit_Float(pGlobal);
+                    if(('Z' == tempch) && (0 <= tempint) && (tempint <= BUTEE_MAX_Z))
+                    {
+                        pGlobal->Zfraiseuse = tempint;
+                        pGlobal->Zpiece = tempfl;
+
+                        pGlobal->status = Lit_Octet(pGlobal);
+                        pGlobal->ThreadReceptionStatut = 1;
+
+                        //On met à jour l'interface
+                        gdk_threads_add_idle((GSourceFunc)Thread_UpdateLabels, pGlobal);
+                    }
+                    else
+                    {
+                        RS232_flushRXTX(pGlobal->comport_number);
+                    }
+                }
+                else
+                {
+                    RS232_flushRXTX(pGlobal->comport_number);
+                }
+            }
+            else
+            {
+                RS232_flushRXTX(pGlobal->comport_number);
+            }
+
+            g_mutex_unlock(pGlobal->Mutex_UpdateLabel);
         }
         else if(taille == 0x05)  //On a reçu une trame indiquant qu'une ligne de programme est terminée
         {
@@ -313,8 +355,13 @@ gpointer Thread_Reception(gpointer data)
                 g_mutex_lock(pGlobal->Mutex_UpdateLabel);
                 pGlobal->nombre_lignes_OK++;
                 LigneProg = pGlobal->nombre_lignes_OK;
+                pGlobal->ThreadReceptionStatut = 1;
                 g_mutex_unlock(pGlobal->Mutex_UpdateLabel);
                 printf("Ligne Executee : %d, instruction : %u, %u\n", LigneProg, temp[2], temp[3]);
+            }
+            else
+            {
+                RS232_flushRXTX(pGlobal->comport_number);
             }
 
             //On met à jour l'interface
@@ -323,9 +370,38 @@ gpointer Thread_Reception(gpointer data)
                 gdk_threads_add_idle((GSourceFunc)Thread_Scroll, pGlobal);
             }
         }
+        else if(taille == 'T')  //0x54 en hexa
+        {
+            memset(temp, 0x00, sizeof(temp));
+            taille = Lit_Octet(pGlobal);    //Longueur de la chaine de caracteres à dépiler
+            printf("***String recue: ");
+            for(i=0 ; i<taille ; i++)
+            {
+                tempch = Lit_Octet(pGlobal);
+                if(isascii(tempch))
+                {
+                    temp[i] = tempch;
+                    g_mutex_lock(pGlobal->Mutex_UpdateLabel);
+                    pGlobal->ThreadReceptionStatut = 1;
+                    g_mutex_unlock(pGlobal->Mutex_UpdateLabel);
+                }
+                else
+                {
+                    g_mutex_lock(pGlobal->Mutex_UpdateLabel);
+                    pGlobal->ThreadReceptionStatut = 0;
+                    g_mutex_unlock(pGlobal->Mutex_UpdateLabel);
+                    break;
+                }
+            }
+            printf("%s\n", temp);
+        }
         else
         {
             Lit_Octet(pGlobal); //Si l'octet ne correspond pas à une taille connue, on dépile le buffer
+            g_mutex_lock(pGlobal->Mutex_UpdateLabel);
+            pGlobal->ThreadReceptionStatut = 0;
+            g_mutex_unlock(pGlobal->Mutex_UpdateLabel);
+            RS232_flushRXTX(pGlobal->comport_number);
         }
     }
 

@@ -7,6 +7,7 @@
 #include "error.h"
 #include "rs232.h"
 #include "communication.h"
+#include "thread.h"
 
 /*******************************************************
 * Fonction Envoi_Ligne_Instruction
@@ -234,45 +235,6 @@ void Envoi_VitesseProgramme(global_t* pGlobal)
 }
 
 /*******************************************************
-* Fonction Attente_Connexion
-*
-*Envoi un caractere 'U' (0x55) pour que la fraiseuse
-*détermine elle même la vitesse de connexion
-*******************************************************/
-int Attente_Connexion(global_t* pGlobal)
-{
-    unsigned char buf[2000];
-    const char* buffer_comp = "Fraisor\n";
-    unsigned char caractere = 'U';
-    int ret = 0;
-
-    RS232_flushRX(pGlobal->comport_number);
-
-    memset(buf, 0, sizeof(buf));
-
-    g_mutex_lock(pGlobal->Mutex_EnvoiPortSerie);
-    RS232_SendBuf(pGlobal->comport_number, &caractere, 1);
-    g_mutex_unlock(pGlobal->Mutex_EnvoiPortSerie);
-
-    g_usleep(300*1000);
-    RS232_PollComport(pGlobal->comport_number, buf, 2000/*sizeof(buffer_comp)+6*/);
-
-    printf("string recue : %s\n", buf);
-
-    if(NULL == strstr((const char*)buf, buffer_comp))
-    {
-        ret = 0;   //Si connexion échouée
-    }
-    else
-    {
-        ret = 1;   //Si connexion réussie
-    }
-
-    return ret;
-}
-
-
-/*******************************************************
 * Fonction Lit_Octet
 *
 *Lit un octet dans le buffer de reception serie
@@ -281,12 +243,14 @@ unsigned char Lit_Octet(global_t* pGlobal)
 {
     unsigned char temp = 0;
     unsigned char ret = 0;
+    unsigned char retry = 10;
 
     if(pGlobal->comport_open == 0)
     {
-        while(RS232_PollComport(pGlobal->comport_number, &temp, 1) <= 0)
+        while((RS232_PollComport(pGlobal->comport_number, &temp, 1) <= 0) && (retry>0))
         {
             g_usleep(100*1000); //valeur de tempo venant de la doc du site http://www.teuniz.net/RS-232/
+            retry--;
         }
 
         ret = temp;
